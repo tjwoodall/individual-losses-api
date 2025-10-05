@@ -1,5 +1,4 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Create a Loss Claim Response",
   "description": "Create a Loss Claim Response",
   "type": "object",

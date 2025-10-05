@@ -1,5 +1,4 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Amend a Loss Claim Type Request",
   "description": "Amend a Loss Claim Type Request",
   "type": "object",

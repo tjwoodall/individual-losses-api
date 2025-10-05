@@ -1,5 +1,4 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Create a Brought Forward Loss Request",
   "description": "Create a Brought Forward Loss Request",
   "type": "object",

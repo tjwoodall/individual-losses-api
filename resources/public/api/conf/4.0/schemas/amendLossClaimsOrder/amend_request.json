@@ -1,5 +1,4 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Amend Loss Claims Order",
   "description": "Amend Loss Claims Order",
   "type": "object",

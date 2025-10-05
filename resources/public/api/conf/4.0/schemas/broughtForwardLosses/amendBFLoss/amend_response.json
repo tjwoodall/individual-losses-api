@@ -1,5 +1,4 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Amend a Brought Forward Loss Amount Response",
   "description": "Amend a Brought Forward Loss Amount Response",
   "type": "object",
