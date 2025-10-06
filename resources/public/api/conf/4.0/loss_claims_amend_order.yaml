@@ -37,8 +37,7 @@ requestBody:
       examples:
         example-1:
           description: Default Example
-          value:
-            $ref: './examples/amendLossClaimsOrder/amend_request.json'
+          externalValue: './examples/amendLossClaimsOrder/amend_request.json'
 
 responses:
   "200":
@@ -53,8 +52,7 @@ responses:
         examples:
           example-1:
             description: Example Response
-            value:
-              $ref: './examples/amendLossClaimsOrder/amend_response.json'
+            externalValue: './examples/amendLossClaimsOrder/amend_response.json'
 
 
   "400":
