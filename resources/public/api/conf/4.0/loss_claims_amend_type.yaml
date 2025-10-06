@@ -47,8 +47,7 @@ post:
         examples:
           example-1:
             description: Default Example
-            value:
-              $ref: './examples/lossClaims/amendLossClaimType/amend_request.json'
+            externalValue: './examples/lossClaims/amendLossClaimType/amend_request.json'
 
   responses:
     "200":
@@ -63,8 +62,7 @@ post:
           examples:
             example-1:
               description: Example Response
-              value:
-                $ref: './examples/lossClaims/amendLossClaimType/amend_response.json'
+              externalValue: './examples/lossClaims/amendLossClaimType/amend_response.json'
 
 
     "400":

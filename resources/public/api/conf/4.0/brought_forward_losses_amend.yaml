@@ -43,8 +43,7 @@ post:
         examples:
           example-1:
             description: Default Example
-            value:
-              $ref: './examples/broughtForwardLosses/amendBFLoss/amend_request.json'
+            externalValue: './examples/broughtForwardLosses/amendBFLoss/amend_request.json'
 
   responses:
     "200":
@@ -59,12 +58,10 @@ post:
           examples:
             example-1:
               description: Self-Employment Class 4 Loss
-              value:
-                $ref: './examples/broughtForwardLosses/amendBFLoss/amend_se_class4_response.json'
+              externalValue: './examples/broughtForwardLosses/amendBFLoss/amend_se_class4_response.json'
             example-2:
               description: UK Non-FHL Property Loss
-              value:
-                $ref: './examples/broughtForwardLosses/amendBFLoss/amend_uk_non_fhl_response.json'
+              externalValue: './examples/broughtForwardLosses/amendBFLoss/amend_uk_non_fhl_response.json'
 
     "400":
       description: Bad request
