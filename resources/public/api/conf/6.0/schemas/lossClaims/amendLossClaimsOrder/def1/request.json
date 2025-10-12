@@ -26,7 +26,7 @@
 		  "sequence": {
 			"description": "The order number in which this loss claim is to be used. It must be an integer in the range 1 to 99. The sequence must start with 1 and have no gaps.",
 			"type": "integer",
-			"example": "1"
+			"example": 1
 		  }
 		},
 		"required": [
