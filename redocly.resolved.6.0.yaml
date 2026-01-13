@@ -1,0 +1,2893 @@
+openapi: 3.0.3
+info:
+  version: '6.0'
+  title: Individual Losses (MTD)
+  description: |
+    The following groups of endpoints are stateful in the Sandbox:
+    * [Brought Forward Losses](#tag/Brought-Forward-Losses)
+    * [Loss Claims](#tag/Loss-Claims)
+
+    # Send fraud prevention data
+    HMRC monitors transactions to help protect your customers' confidential data from criminals and fraudsters. 
+
+    <div class="govuk-warning-text warning-icon-fix">
+      <span class="govuk-warning-text__icon warning-icon-ui-fix" aria-hidden="true">!</span>
+      <strong class="govuk-warning-text__text">
+        <span class="govuk-warning-text__assistive">Warning</span>
+        You are required by law to submit header data for this API. This includes all associated APIs and endpoints.
+      </strong>
+    </div>
+
+    [Check the data you need to send](/guides/fraud-prevention/). You can also use the [Test API](/api-documentation/docs/api/service/txm-fph-validator-api/1.0) during initial development and as part of your quality assurance checks.
+
+    # Mapping APIs to Self Assessment tax return forms
+    Some parameters in this API map to box numbers in one or more Self Assessment tax return forms. To learn more and to download this mapping information as a CSV file, go to [income-tax-mtd-changelog/mapping](https://github.com/hmrc/income-tax-mtd-changelog?tab=readme-ov-file#mapping-apis-to-self-assessment-tax-return-forms) on GitHub.
+
+    # Changelog
+    You can find the changelog in the [income-tax-mtd-changelog](https://github.com/hmrc/income-tax-mtd-changelog/#readme) on GitHub.
+
+    # Support
+
+    * Direct reports of bugs or errors in Production or Sandbox code, or queries about HMRC business functionality (such as how a specific field is used by HMRC or why it is needed) to the [Software Development Support Team (SDST)](https://developer.service.hmrc.gov.uk/developer/support).
+    * Send queries or feedback related to the design of the APIs (including recommended changes) using the [income-tax-mtd-changelog](https://github.com/hmrc/income-tax-mtd-changelog/issues) GitHub page.
+    * <a href="/contact/report-technical-problem?newTab=true&service=api-documentation-frontend" target="_blank">Is this page not working properly? (opens in new tab)</a>
+servers:
+  - url: https://test-api.service.hmrc.gov.uk
+    description: Sandbox
+  - url: https://api.service.hmrc.gov.uk
+    description: Production
+tags:
+  - name: Brought Forward Losses
+    description: Resources related to a customer’s financial data for their brought forward losses.
+  - name: Loss Claims
+    description: Resources related to a customer’s financial data for their loss claims.
+paths:
+  /individuals/losses/{nino}/brought-forward-losses/tax-year/brought-forward-from/{taxYear}:
+    post:
+      summary: Create a Brought Forward Loss
+      description: |
+        This endpoint enables you to create a new brought forward loss which can be submitted against self-employment, self-employment class 4,
+        UK Furnished Holiday Let (FHL) property, UK other (Non-FHL) property, foreign property FHL in the European Economic Area (EEA) and foreign property for the tax year prior to joining MTD.
+        A National Insurance number and tax year must be provided.
+
+        <strong>
+          Note: Brought forward losses for the following 2 income sources will not be supported from tax year 2025-26 onwards:
+            <ul>
+              <li>uk-property-fhl</li>
+              <li>foreign-property-fhl-eea</li>
+            </ul>
+        </strong>    
+
+        ### Test data
+        Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.    
+
+        | Header Value (Gov-Test-Scenario)     | Scenario                                                                                                                                             |
+        |--------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
+        | N/A - DEFAULT                        | Simulates success response.                                                                                                                          |
+        | NOT_FOUND                            | Simulates the scenario where no data is found.                                                                                                       |
+        | DUPLICATE_SUBMISSION                 | Simulates the scenario where a duplicated loss is found.                                                                                             |
+        | STATEFUL                             | Performs a stateful create.                                                                                                                          |
+        | BFL_NOT_SUPPORTED_FOR_FHL_PROPERTIES | Simulates the scenario where brought forward losses are submitted for income sources uk-property-fhl or foreign-property-fhl-eea for tax year 25/26. |
+        | OUTSIDE_AMENDMENT_WINDOW             | Simulates the scenario where request cannot be completed as it is outside the amendment window.                                                      |
+      tags:
+        - Brought Forward Losses
+      parameters:
+        - name: nino
+          in: path
+          description: |
+            National Insurance number, in the format `AA999999A`.
+          schema: &ref_3
+            type: string
+            example: TC663795B
+          required: true
+        - name: taxYear
+          in: path
+          description: |
+            The tax year to which the data applies. The start year and end year must not span two tax years. The minimum tax year is 2018-19. No gaps are allowed, for example, 2018-20 is not valid.
+          schema: &ref_4
+            type: string
+            example: 2018-19
+          required: true
+        - name: Accept
+          in: header
+          description: |
+            Specifies the response format and the version of the API to be used.
+          schema: &ref_5
+            type: string
+            enum:
+              - application/vnd.hmrc.6.0+json
+          required: true
+        - name: Content-Type
+          in: header
+          description: |
+            Specifies the format of the request body, which must be JSON.
+          schema: &ref_6
+            type: string
+            enum:
+              - application/json
+          required: true
+        - name: Authorization
+          in: header
+          description: |
+            An OAuth 2.0 Bearer Token with the *write:self-assessment* scope.
+          schema: &ref_7
+            type: string
+            example: Bearer bb7fed3fe10dd235a2ccda3d50fb
+          required: true
+        - name: Gov-Test-Scenario
+          in: header
+          description: |
+            Only in sandbox environment. See Test Data table for all header values.
+          schema: &ref_8
+            type: string
+            example: '-'
+          required: false
+      security:
+        - User-Restricted:
+            - write:self-assessment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $schema: http://json-schema.org/draft-04/schema#
+              title: Create a Brought Forward Loss Request
+              description: Create a Brought Forward Loss Request
+              type: object
+              properties:
+                taxYearBroughtForwardFrom:
+                  type: string
+                  description: The tax year to which the loss applies. The start year and end year must not span two tax years. No gaps are allowed, for example, 2020-22 is not valid. The minimum tax year is 2018-19. The tax year must have ended.
+                  example: 2020-21
+                typeOfLoss:
+                  type: string
+                  enum:
+                    - self-employment
+                    - self-employment-class4
+                    - uk-property-fhl
+                    - uk-property
+                    - foreign-property-fhl-eea
+                    - foreign-property
+                  description: The type of business the loss applies to.
+                businessId:
+                  type: string
+                  description: An identifier for the business, unique to the customer.
+                  example: XPIS12345678910
+                  pattern: ^X[A-Z0-9]{1}IS[0-9]{11}$
+                lossAmount:
+                  type: number
+                  description: Brought Forward Loss amount related to the type of loss specified. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                  multipleOf: 0.01
+                  minimum: 0
+                  maximum: 99999999999.99
+                  example: '2345.67'
+              required:
+                - taxYearBroughtForwardFrom
+                - typeOfLoss
+                - businessId
+                - lossAmount
+              additionalProperties: false
+            examples:
+              example-1:
+                description: Self-Employment Request
+                value:
+                  taxYearBroughtForwardFrom: 2020-21
+                  businessId: XBIS12345678910
+                  typeOfLoss: self-employment
+                  lossAmount: 5001.99
+              example-2:
+                description: UK Property Request
+                value:
+                  taxYearBroughtForwardFrom: 2020-21
+                  businessId: XPIS12345678910
+                  typeOfLoss: uk-property-fhl
+                  lossAmount: 500.99
+              example-3:
+                description: Foreign Property Request
+                value:
+                  taxYearBroughtForwardFrom: 2020-21
+                  businessId: XFIS12345678910
+                  typeOfLoss: foreign-property
+                  lossAmount: 5000.99
+      responses:
+        '201':
+          description: Success
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: &ref_0
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+              required: true
+          content:
+            application/json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                title: Create a Brought Forward Loss Response
+                description: Create a Brought Forward Loss Response
+                type: object
+                properties:
+                  lossId:
+                    description: The unique identifier of the loss.
+                    type: string
+                    pattern: ^[A-Za-z0-9]{15}$
+                    example: AAZZ1234567890a
+                required:
+                  - lossId
+                additionalProperties: false
+              examples:
+                example-1:
+                  description: Example Response
+                  value:
+                    lossId: AAZZ1234567890a
+        '400':
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: &ref_1
+                  code:
+                    description: The error code
+                    type: string
+                  message:
+                    description: The error message
+                    type: string
+                required: &ref_2
+                  - code
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value: &ref_9
+                    code: FORMAT_NINO
+                    message: The provided NINO is invalid
+                FORMAT_TAX_YEAR:
+                  description: |
+                    The format of the supplied taxYear value is not valid.
+                  value: &ref_10
+                    code: FORMAT_TAX_YEAR
+                    message: The taxYear format is invalid
+                RULE_TAX_YEAR_RANGE_INVALID:
+                  description: |
+                    Tax year range invalid. A tax year range of one year is required.
+                  value: &ref_12
+                    code: RULE_TAX_YEAR_RANGE_INVALID
+                    message: A tax year range of one year is required
+                RULE_TAX_YEAR_NOT_SUPPORTED:
+                  description: |
+                    The specified tax year is not supported. The tax year specified is before the minimum tax year value.
+                  value: &ref_13
+                    code: RULE_TAX_YEAR_NOT_SUPPORTED
+                    message: The tax year specified does not lie within the supported range
+                FORMAT_VALUE:
+                  description: |
+                    One or more values have been added with the incorrect format.
+                  value: &ref_11
+                    code: FORMAT_VALUE
+                    message: The value must be between 0 and 99999999999.99
+                FORMAT_BUSINESS_ID:
+                  description: |
+                    The format of the supplied Business ID field is not valid.
+                  value: &ref_20
+                    code: FORMAT_BUSINESS_ID
+                    message: The provided Business ID is invalid
+                RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED:
+                  description: |
+                    An empty or non-matching body was submitted.
+                  value: &ref_14
+                    code: RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED
+                    message: An empty or non-matching body was submitted
+                FORMAT_TYPE_OF_LOSS:
+                  description: |
+                    The format of the supplied type of loss field is not valid.
+                  value: &ref_19
+                    code: FORMAT_TYPE_OF_LOSS
+                    message: The provided type of Loss is invalid
+                RULE_DUPLICATE_SUBMISSION:
+                  description: |
+                    The remote endpoint has indicated that submission already exists for this Resource.
+                  value:
+                    code: RULE_DUPLICATE_SUBMISSION
+                    message: Submission already exists
+                RULE_TAX_YEAR_NOT_ENDED:
+                  description: |
+                    The submission has been made before the taxYear it relates to has ended.
+                  value:
+                    code: RULE_TAX_YEAR_NOT_ENDED
+                    message: Tax year not ended
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: |
+                    The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for 
+                    this endpoint version. This error will only be returned in the Sandbox environment.
+                  value: &ref_15
+                    code: RULE_INCORRECT_GOV_TEST_SCENARIO
+                    message: The supplied Gov-Test-Scenario is not valid
+                RULE_BFL_NOT_SUPPORTED_FOR_FHL_PROPERTIES:
+                  description: |
+                    Brought forward losses for income sources "FHL Property - EEA" and "UK Property FHL" will not be supported from tax year 25/26.
+                  value:
+                    code: RULE_BFL_NOT_SUPPORTED_FOR_FHL_PROPERTIES
+                    message: Brought forward losses for income sources uk-property-fhl and foreign-property-fhl-eea are not supported from tax year 25/26
+                RULE_OUTSIDE_AMENDMENT_WINDOW:
+                  description: |
+                    The request cannot be completed as you are outside the amendment window.
+                  value: &ref_16
+                    code: RULE_OUTSIDE_AMENDMENT_WINDOW
+                    message: You are outside the amendment window
+        '403':
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value: &ref_17
+                    code: CLIENT_OR_AGENT_NOT_AUTHORISED
+                    message: |
+                      The client or agent is not authorised
+        '404':
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                MATCHING_RESOURCE_NOT_FOUND:
+                  description: |
+                    Matching resource not found.
+                  value: &ref_18
+                    code: MATCHING_RESOURCE_NOT_FOUND
+                    message: Matching resource not found
+  /individuals/losses/{nino}/brought-forward-losses/{lossId}/tax-year/{taxYear}/change-loss-amount:
+    post:
+      summary: Amend a Brought Forward Loss Amount
+      description: |
+        This endpoint enables you to update an existing brought forward loss amount.
+        A National Insurance number, tax year and Loss ID must be provided.
+
+        <strong>
+          Note: Brought forward losses for the following 2 income sources will not be supported from tax year 2025-26 onwards:
+            <ul>
+              <li>uk-property-fhl</li>
+              <li>foreign-property-fhl-eea</li>
+            </ul>
+        </strong>
+
+        ### Test data
+        Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.    
+
+        | Header Value (Gov-Test-Scenario)  | Scenario                                                                                                                            |
+        |-----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+        | N/A - DEFAULT                     | Simulates success response where type of loss is Self-Employment.                                                                   |
+        | CLASS_4                           | Simulates the scenario where type of loss is Self-Employment Class 4.                                                               |
+        | FOREIGN_PROPERTY                  | Simulates the scenario where type of loss is Foreign Property.                                                                      |
+        | FOREIGN_PROPERTY_FHL_EEA          | Simulates the scenario where type of loss is Foreign Property FHL EEA.                                                              |
+        | UK_PROPERTY_FHL                   | Simulates the scenario where type of loss is UK Property FHL.                                                                       |
+        | UK_PROPERTY                       | Simulates the scenario where type of loss is UK Property (Non-FHL).                                                                 |
+        | NOT_FOUND                         | Simulates the scenario where no data is found.                                                                                      |
+        | NO_CHANGE                         | Simulates the scenario where the brought forward loss amount has not changed.                                                       |
+        | OUTSIDE_AMENDMENT_WINDOW          | Simulates the scenario where request cannot be completed as it is outside the amendment window.                                     |
+        | DYNAMIC                           | The following response values will change to correspond to the values submitted in the request:<br> • lossAmount<br> • lastModified |
+        | STATEFUL                          | Performs a stateful update.                                                                                                         |
+      tags:
+        - Brought Forward Losses
+      parameters:
+        - name: nino
+          in: path
+          description: |
+            National Insurance number, in the format `AA999999A`.
+          schema: *ref_3
+          required: true
+        - name: lossId
+          in: path
+          description: |
+            The unique identifier of the loss.
+          schema: &ref_21
+            type: string
+            example: AAZZ1234567890A
+            pattern: ^[A-Za-z0-9]{15}$
+          required: true
+        - name: taxYear
+          in: path
+          description: |
+            The tax year to which the data applies. The start year and end year must not span two tax years. The minimum tax year is 2018-19. No gaps are allowed, for example, 2018-20 is not valid.
+          schema: *ref_4
+          required: true
+        - name: Accept
+          in: header
+          description: |
+            Specifies the response format and the version of the API to be used.
+          schema: *ref_5
+          required: true
+        - name: Content-Type
+          in: header
+          description: |
+            Specifies the format of the request body, which must be JSON.
+          schema: *ref_6
+          required: true
+        - name: Authorization
+          in: header
+          description: |
+            An OAuth 2.0 Bearer Token with the *write:self-assessment* scope.
+          schema: *ref_7
+          required: true
+        - name: Gov-Test-Scenario
+          in: header
+          description: |
+            Only in sandbox environment. See Test Data table for all header values.
+          schema: *ref_8
+          required: false
+      security:
+        - User-Restricted:
+            - write:self-assessment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $schema: http://json-schema.org/draft-04/schema#
+              title: Amend a Brought Forward Loss Amount Request
+              description: Amend a Brought Forward Loss Amount Request
+              type: object
+              properties:
+                lossAmount:
+                  type: number
+                  description: Brought Forward Loss amount related to the type of loss specified. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                  multipleOf: 0.01
+                  minimum: 0
+                  maximum: 99999999999.99
+                  example: '5000.99'
+              required:
+                - lossAmount
+              additionalProperties: false
+            examples:
+              example-1:
+                description: Default Example
+                value:
+                  lossAmount: 3456.78
+      responses:
+        '200':
+          description: Success
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                title: Amend a Brought Forward Loss Amount Response
+                description: Amend a Brought Forward Loss Amount Response
+                type: object
+                properties:
+                  businessId:
+                    type: string
+                    description: An identifier for the business, unique to the customer.
+                    example: XAIS12345678910
+                    pattern: ^X[A-Z0-9]{1}IS[0-9]{11}$
+                  typeOfLoss:
+                    type: string
+                    enum:
+                      - self-employment
+                      - self-employment-class4
+                      - uk-property-fhl
+                      - uk-property
+                      - foreign-property-fhl-eea
+                      - foreign-property
+                    description: The type of business the loss applies to.
+                  lossAmount:
+                    type: number
+                    description: Brought Forward Loss amount related to the type of loss specified. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                    multipleOf: 0.01
+                    minimum: 0
+                    maximum: 99999999999.99
+                    example: '12345.67'
+                  taxYearBroughtForwardFrom:
+                    type: string
+                    description: The tax year to which the loss applies. The start year and end year must not span two tax years. The minimum tax year is 2018-19. No gaps are allowed, for example, 2022-24 is not valid.
+                    example: 2018-19
+                  lastModified:
+                    type: string
+                    description: The timestamp when the entry was created or last modified.
+                    format: date-time
+                    pattern: ^2[0-9]{3}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{0,3}|)Z$
+                    example: '2020-07-13T12:13:48.763Z'
+                required:
+                  - businessId
+                  - typeOfLoss
+                  - lossAmount
+                  - taxYearBroughtForwardFrom
+                  - lastModified
+                additionalProperties: false
+              examples:
+                example-1:
+                  description: Self-Employment Class 4 Loss
+                  value:
+                    businessId: XBIS12345678910
+                    typeOfLoss: self-employment-class4
+                    lossAmount: 3456.78
+                    taxYearBroughtForwardFrom: 2021-22
+                    lastModified: '2022-07-13T12:13:48.763Z'
+                example-2:
+                  description: UK Property (Non-FHL) Loss
+                  value:
+                    businessId: XPIS12345678910
+                    typeOfLoss: uk-property
+                    lossAmount: 3456.78
+                    taxYearBroughtForwardFrom: 2021-22
+                    lastModified: '2022-07-13T12:13:48.763Z'
+        '400':
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value: *ref_9
+                FORMAT_LOSS_ID:
+                  description: |
+                    The format of the supplied Loss ID is not valid.
+                  value: &ref_23
+                    code: FORMAT_LOSS_ID
+                    message: The provided Loss ID is invalid
+                FORMAT_TAX_YEAR:
+                  description: |
+                    The format of the supplied taxYear value is not valid.
+                  value: *ref_10
+                FORMAT_VALUE:
+                  description: |
+                    One or more values have been added with the incorrect format.
+                  value: *ref_11
+                RULE_TAX_YEAR_RANGE_INVALID:
+                  description: |
+                    Tax year range invalid. A tax year range of one year is required.
+                  value: *ref_12
+                RULE_TAX_YEAR_NOT_SUPPORTED:
+                  description: |
+                    The specified tax year is not supported. The tax year specified is before the minimum tax year value.
+                  value: *ref_13
+                RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED:
+                  description: |
+                    An empty or non-matching body was submitted.
+                  value: *ref_14
+                RULE_NO_CHANGE:
+                  description: |
+                    The loss amount supplied is the same as the existing stored loss amount.
+                  value:
+                    code: RULE_NO_CHANGE
+                    message: The brought forward loss amount has not changed
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: |
+                    The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for 
+                    this endpoint version. This error will only be returned in the Sandbox environment.
+                  value: *ref_15
+                RULE_OUTSIDE_AMENDMENT_WINDOW:
+                  description: |
+                    The request cannot be completed as you are outside the amendment window.
+                  value: *ref_16
+        '403':
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value: *ref_17
+        '404':
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                MATCHING_RESOURCE_NOT_FOUND:
+                  description: |
+                    Matching resource not found.
+                  value: *ref_18
+  /individuals/losses/{nino}/brought-forward-losses/tax-year/{taxYearBroughtForwardFrom}:
+    get:
+      summary: List Brought Forward Losses
+      description: |
+        This endpoint enables you to retrieve a list of all brought forward losses that have incurred before joining MTD.
+        A National Insurance number and tax year must be provided.
+
+        <strong>
+          Note: Brought forward losses for the following 2 income sources will not be supported from tax year 2025-26 onwards:
+            <ul>
+              <li>uk-property-fhl</li>
+              <li>foreign-property-fhl-eea</li>
+            </ul>
+        </strong>
+
+        ### Test data
+        Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+        | Header Value (Gov-Test-Scenario) | Scenario                                                 |
+        |----------------------------------|----------------------------------------------------------|
+        | N/A - DEFAULT                    | Simulates success response with multiple business types. |
+        | SELF_EMPLOYMENT                  | Simulates success response with only self-employment.    |
+        | UK_PROPERTY                      | Simulates success response with only UK property.        |
+        | FOREIGN_PROPERTY                 | Simulates success response with only foreign property.   |
+        | TAX_YEAR_NOT_SUPPORTED           | Simulates the scenario where the tax year specified in taxYearBroughtForwardFrom is not supported. |
+        | NOT_FOUND                        | Simulates the scenario where no data is found.           |
+        | DYNAMIC                          | The following response values will change to correspond to the values submitted in the request:<br> • businessID<br> • typeOfLoss<br> • taxYearBroughtForwardFrom<br> • lastModified |
+        | STATEFUL                         | Performs a stateful list.                                |
+      tags:
+        - Brought Forward Losses
+      parameters:
+        - name: nino
+          in: path
+          description: |
+            National Insurance number, in the format `AA999999A`.
+          schema: *ref_3
+          required: true
+        - name: taxYearBroughtForwardFrom
+          in: path
+          description: |
+            The tax year to which the loss applies in the format YYYY-YY.  The minimum tax year is 2018-19. The tax year must have ended. No gaps are allowed. For example, 2020-22 is not valid.
+          schema:
+            type: string
+            pattern: ^2[0-9]{3}-[0-9]{2}$
+            example: 2023-24
+          required: true
+        - in: query
+          name: businessId
+          description: |
+            An identifier for the business, unique to the customer.
+          schema: &ref_24
+            type: string
+            pattern: ^X[A-Z0-9]{1}IS[0-9]{11}$
+            example: XAIS12345678910
+          required: false
+        - in: query
+          name: typeOfLoss
+          description: |
+            The type of business the loss applies to.
+          schema:
+            type: string
+            enum:
+              - self-employment
+              - uk-property-fhl
+              - uk-property
+              - foreign-property-fhl-eea
+              - foreign-property
+            example: self-employment
+          required: false
+        - name: Accept
+          in: header
+          description: |
+            Specifies the response format and the version of the API to be used.
+          schema: *ref_5
+          required: true
+        - name: Authorization
+          in: header
+          description: |
+            An OAuth 2.0 Bearer Token with the *read:self-assessment* scope.
+          schema: &ref_22
+            type: string
+            example: Bearer bb7fed3fe10dd235a2ccda3d50fb
+          required: true
+        - name: Gov-Test-Scenario
+          in: header
+          description: |
+            Only in sandbox environment. See Test Data table for all header values.
+          schema: *ref_8
+          required: false
+      security:
+        - User-Restricted:
+            - read:self-assessment
+      responses:
+        '200':
+          description: Success
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                title: List Brought Forward Losses Response
+                description: List Brought Forward Losses Response
+                type: object
+                properties:
+                  losses:
+                    type: array
+                    items:
+                      type: object
+                      description: Array of losses. An empty array will never be returned. In the instance that no losses exist for the supplied NINO, a MATCHING_RESOURCE_NOT_FOUND error will be returned.
+                      properties:
+                        lossId:
+                          description: The unique identifier of the loss.
+                          type: string
+                          pattern: ^[A-Za-z0-9]{15}$
+                          example: 1234568790ABCDE
+                        businessId:
+                          description: An identifier for the business, unique to the customer.
+                          type: string
+                          pattern: ^X[A-Z0-9]{1}IS[0-9]{11}$
+                          example: XPIS12345678910
+                        typeOfLoss:
+                          description: The type of business the loss applies to.
+                          type: string
+                          enum:
+                            - self-employment
+                            - self-employment-class4
+                            - uk-property-fhl
+                            - uk-property
+                            - foreign-property-fhl-eea
+                            - foreign-property
+                        lossAmount:
+                          description: Brought Forward Loss amount related to the type of loss specified. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          type: number
+                          multipleOf: 0.01
+                          minimum: 0
+                          maximum: 99999999999.99
+                          example: '5000.99'
+                        taxYearBroughtForwardFrom:
+                          description: The tax year to which the loss applies. The start year and end year must not span two tax years. No gaps are allowed, for example, 2020-22 is not valid. The minimum tax year is 2018-19. The tax year must have ended.
+                          type: string
+                          example: 2022-23
+                        lastModified:
+                          description: The timestamp when the entry was created or last modified.
+                          type: string
+                          format: date-time
+                          pattern: ^2[0-9]{3}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{0,3}|)Z$
+                          example: '2021-07-13T12:13:48.763Z'
+                      required:
+                        - lossId
+                        - businessId
+                        - typeOfLoss
+                        - lossAmount
+                        - taxYearBroughtForwardFrom
+                        - lastModified
+                      additionalProperties: false
+                required:
+                  - losses
+                additionalProperties: false
+              examples:
+                example-1:
+                  description: Example Response
+                  value:
+                    losses:
+                      - lossId: A2Za0911235813a
+                        businessId: XBIS12345678901
+                        typeOfLoss: self-employment
+                        lossAmount: 9420.01
+                        taxYearBroughtForwardFrom: 2021-22
+                        lastModified: '2022-12-02T11:55:55.763Z'
+                      - lossId: A2Za0911235813b
+                        businessId: XBIS12345678902
+                        typeOfLoss: self-employment-class4
+                        lossAmount: 3298.5
+                        taxYearBroughtForwardFrom: 2021-22
+                        lastModified: '2022-12-03T11:55:55.763Z'
+                      - lossId: A2Za0911235813c
+                        businessId: XPIS12345678903
+                        typeOfLoss: uk-property-fhl
+                        lossAmount: 1882.99
+                        taxYearBroughtForwardFrom: 2021-22
+                        lastModified: '2022-12-04T11:55:55.763Z'
+                      - lossId: A2Za0911235813d
+                        businessId: XPIS12345678904
+                        typeOfLoss: uk-property
+                        lossAmount: 4882.99
+                        taxYearBroughtForwardFrom: 2021-22
+                        lastModified: '2022-12-05T11:55:55.763Z'
+                      - lossId: A2Za0911235813e
+                        businessId: XFIS12345678905
+                        typeOfLoss: foreign-property-fhl-eea
+                        lossAmount: 2985.99
+                        taxYearBroughtForwardFrom: 2021-22
+                        lastModified: '2022-12-06T11:55:55.763Z'
+                      - lossId: A2Za0911235813f
+                        businessId: XFIS12345678906
+                        typeOfLoss: foreign-property
+                        lossAmount: 3553.99
+                        taxYearBroughtForwardFrom: 2021-22
+                        lastModified: '2022-12-07T11:55:55.763Z'
+        '400':
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value: *ref_9
+                FORMAT_TAX_YEAR:
+                  description: |
+                    The format of the supplied taxYear value is not valid.
+                  value: *ref_10
+                RULE_TAX_YEAR_NOT_SUPPORTED:
+                  description: |
+                    The specified tax year is not supported. The tax year specified is before the minimum tax year value.
+                  value: *ref_13
+                RULE_TAX_YEAR_RANGE_INVALID:
+                  description: |
+                    Tax year range invalid. A tax year range of one year is required.
+                  value: *ref_12
+                FORMAT_TYPE_OF_LOSS:
+                  description: |
+                    The format of the supplied type of loss field is not valid.
+                  value: *ref_19
+                FORMAT_BUSINESS_ID:
+                  description: |
+                    The format of the supplied Business ID field is not valid.
+                  value: *ref_20
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: |
+                    The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for 
+                    this endpoint version. This error will only be returned in the Sandbox environment.
+                  value: *ref_15
+        '403':
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value: *ref_17
+        '404':
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                MATCHING_RESOURCE_NOT_FOUND:
+                  description: |
+                    Matching resource not found.
+                  value: *ref_18
+  /individuals/losses/{nino}/brought-forward-losses/{lossId}:
+    get:
+      summary: Retrieve a Brought Forward Loss
+      description: |
+        This endpoint enables you to retrieve an existing brought forward loss amount. 
+        A National Insurance number and Loss ID must be provided.
+
+        <strong>
+          Note: Brought forward losses for the following 2 income sources will not be supported from tax year 2025-26 onwards:
+            <ul>
+              <li>uk-property-fhl</li>
+              <li>foreign-property-fhl-eea</li>
+            </ul>
+        </strong>
+
+        ### Test data
+        Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+        | Header Value (Gov-Test-Scenario) | Scenario                                                          |
+        |----------------------------------|-------------------------------------------------------------------|
+        | N/A - DEFAULT                    | Simulates success response where type of loss is Self-Employment. |
+        | UK_PROPERTY_FHL                  | Simulates the scenario where type of loss is UK Property FHL.     |
+        | FOREIGN_PROPERTY                 | Simulates the scenario where type of loss is Foreign Property.    |
+        | NOT_FOUND                        | Simulates the scenario where no data is found.                    |
+        | STATEFUL                         | Performs a stateful retrieve.                                     |
+      tags:
+        - Brought Forward Losses
+      parameters:
+        - name: nino
+          in: path
+          description: |
+            National Insurance number, in the format `AA999999A`.
+          schema: *ref_3
+          required: true
+        - name: lossId
+          in: path
+          description: |
+            The unique identifier of the loss.
+          schema: *ref_21
+          required: true
+        - name: Accept
+          in: header
+          description: |
+            Specifies the response format and the version of the API to be used.
+          schema: *ref_5
+          required: true
+        - name: Authorization
+          in: header
+          description: |
+            An OAuth 2.0 Bearer Token with the *read:self-assessment* scope.
+          schema: *ref_22
+          required: true
+        - name: Gov-Test-Scenario
+          in: header
+          description: |
+            Only in sandbox environment. See Test Data table for all header values.
+          schema: *ref_8
+          required: false
+      security:
+        - User-Restricted:
+            - read:self-assessment
+      responses:
+        '200':
+          description: Success
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                title: Retrieve a Brought Forward Loss Response
+                description: Retrieve a Brought Forward Loss Response
+                type: object
+                properties:
+                  businessId:
+                    type: string
+                    description: An identifier for the business, unique to the customer.
+                    example: XAIS12345678910
+                    pattern: ^X[A-Z0-9]{1}IS[0-9]{11}$
+                  typeOfLoss:
+                    type: string
+                    enum:
+                      - self-employment
+                      - self-employment-class4
+                      - uk-property-fhl
+                      - uk-property
+                      - foreign-property-fhl-eea
+                      - foreign-property
+                    description: The type of business the loss applies to.
+                  lossAmount:
+                    type: number
+                    description: Brought Forward Loss amount related to the type of loss specified. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                    multipleOf: 0.01
+                    minimum: 0
+                    maximum: 99999999999.99
+                    example: '5000.99'
+                  taxYearBroughtForwardFrom:
+                    type: string
+                    description: The tax year to which the loss applies. The start year and end year must not span two tax years. No gaps are allowed, for example, 2020-22 is not valid. The minimum tax year is 2018-19. The tax year must have ended.
+                    example: 2022-23
+                  lastModified:
+                    type: string
+                    description: The timestamp when the entry was created or last modified.
+                    format: date-time
+                    pattern: ^2[0-9]{3}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{0,3}|)Z$
+                    example: '2020-07-13T12:13:48.763Z'
+                required:
+                  - businessId
+                  - typeOfLoss
+                  - lossAmount
+                  - taxYearBroughtForwardFrom
+                  - lastModified
+                additionalProperties: false
+              examples:
+                example-1:
+                  description: Self-Employment Loss
+                  value:
+                    businessId: XBIS12345678911
+                    typeOfLoss: self-employment
+                    lossAmount: 300.11
+                    taxYearBroughtForwardFrom: 2021-22
+                    lastModified: '2022-11-05T11:56:27Z'
+                example-2:
+                  description: UK FHL Property Loss
+                  value:
+                    businessId: XPIS12345678912
+                    typeOfLoss: uk-property-fhl
+                    lossAmount: 423.32
+                    taxYearBroughtForwardFrom: 2021-22
+                    lastModified: '2022-12-02T12:56:58Z'
+                example-3:
+                  description: Foreign Property Loss
+                  value:
+                    businessId: XFIS12345678913
+                    typeOfLoss: foreign-property
+                    lossAmount: 553.32
+                    taxYearBroughtForwardFrom: 2021-22
+                    lastModified: '2022-12-02T11:55:55Z'
+        '400':
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value: *ref_9
+                FORMAT_LOSS_ID:
+                  description: |
+                    The format of the supplied Loss ID is not valid.
+                  value: *ref_23
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: |
+                    The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for 
+                    this endpoint version. This error will only be returned in the Sandbox environment.
+                  value: *ref_15
+        '403':
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value: *ref_17
+        '404':
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                MATCHING_RESOURCE_NOT_FOUND:
+                  description: |
+                    Matching resource not found.
+                  value: *ref_18
+  /individuals/losses/{nino}/brought-forward-losses/{lossId}/tax-year/{taxYear}:
+    delete:
+      summary: Delete a Brought Forward Loss
+      description: |
+        This endpoint allows a developer to delete an existing brought forward loss. A National Insurance number, tax year and Loss ID must be provided.
+        The user should be aware that where a loss has been used as part of a successful final declaration activity, deletion will be blocked and an error code will be returned. In such a case, the user can amend the loss amount to zero.
+
+        ### Test data
+        Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.    
+
+        | Header Value (Gov-Test-Scenario)       | Scenario                                       |
+        |----------------------------------------|------------------------------------------------|
+        | N/A - DEFAULT                          | Simulates success response.                    |
+        | DELETE_AFTER_FINAL_DECLARATION         | Simulates the error scenario where the user has already submitted a final declaration for this tax year. |
+        | NOT_FOUND                              | Simulates the scenario where no data is found. |
+        | OUTSIDE_AMENDMENT_WINDOW               | Simulates the scenario where request cannot be completed as it is outside the amendment window. |
+        | STATEFUL                               | Performs a stateful delete.                    |
+      tags:
+        - Brought Forward Losses
+      parameters:
+        - name: nino
+          in: path
+          description: |
+            National Insurance number, in the format `AA999999A`.
+          schema: *ref_3
+          required: true
+        - name: lossId
+          in: path
+          description: |
+            The unique identifier of the loss.
+          schema: *ref_21
+          required: true
+        - name: taxYear
+          in: path
+          description: |
+            The tax year to which the data applies. The start year and end year must not span two tax years. The minimum tax year is 2018-19. No gaps are allowed, for example, 2018-20 is not valid.
+          schema: *ref_4
+          required: true
+        - name: Accept
+          in: header
+          description: |
+            Specifies the response format and the version of the API to be used.
+          schema: *ref_5
+          required: true
+        - name: Authorization
+          in: header
+          description: |
+            An OAuth 2.0 Bearer Token with the *write:self-assessment* scope.
+          schema: *ref_7
+          required: true
+        - name: Gov-Test-Scenario
+          in: header
+          description: |
+            Only in sandbox environment. See Test Data table for all header values.
+          schema: *ref_8
+          required: false
+      security:
+        - User-Restricted:
+            - write:self-assessment
+      responses:
+        '204':
+          description: Success (No Content)
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content: {}
+        '400':
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value: *ref_9
+                FORMAT_LOSS_ID:
+                  description: |
+                    The format of the supplied Loss ID is not valid.
+                  value: *ref_23
+                FORMAT_TAX_YEAR:
+                  description: |
+                    The format of the supplied taxYear value is not valid.
+                  value: *ref_10
+                RULE_TAX_YEAR_RANGE_INVALID:
+                  description: |
+                    Tax year range invalid. A tax year range of one year is required.
+                  value: *ref_12
+                RULE_TAX_YEAR_NOT_SUPPORTED:
+                  description: |
+                    The specified tax year is not supported. The tax year specified is before the minimum tax year value.
+                  value: *ref_13
+                RULE_DELETE_AFTER_FINAL_DECLARATION:
+                  description: |
+                    The remote endpoint has indicated that the requested resource has been locked.
+                  value:
+                    code: RULE_DELETE_AFTER_FINAL_DECLARATION
+                    message: This loss cannot be deleted after final declaration
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: |
+                    The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for 
+                    this endpoint version. This error will only be returned in the Sandbox environment.
+                  value: *ref_15
+                RULE_OUTSIDE_AMENDMENT_WINDOW:
+                  description: |
+                    The request cannot be completed as you are outside the amendment window.
+                  value: *ref_16
+        '403':
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value: *ref_17
+        '404':
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                MATCHING_RESOURCE_NOT_FOUND:
+                  description: |
+                    Matching resource not found.
+                  value: *ref_18
+  /individuals/losses/{nino}/loss-claims:
+    post:
+      summary: Create a Loss Claim
+      description: |
+        This endpoint enables you to create a loss claim against an income source for a specific tax year. <Strong>Claims cannot be made until after the end of the accounting period.</Strong>
+        A National Insurance number must be provided.
+
+        <strong>
+          Note: carry-sideways-fhl type of loss claims for income sources uk-property-fhl and foreign-property-fhl-eea will not be supported from tax year 2025-26 onwards.
+        </strong>
+
+        ### Test data
+        Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+        | Header Value (Gov-Test-Scenario) | Scenario                                                                              |
+        | -------------------------------- | ------------------------------------------------------------------------------------- |
+        | N/A - DEFAULT                    | Simulates success response.                                                           |
+        | NOT_FOUND                        | Simulates the scenario where no data is found.                                        |
+        | DUPLICATE                        | Simulates the scenario where a duplicated value is found.                             |
+        | ACCOUNTING_PERIOD_NOT_ENDED      | Simulates the scenario where the loss claim has been made too soon.                   |
+        | NO_ACCOUNTING_PERIOD             | Simulates the scenario where there is no accounting period for the year of the claim. |
+        | OUTSIDE_AMENDMENT_WINDOW         | Simulates the scenario where request cannot be completed as it is outside the amendment window. |
+        | STATEFUL                         | Performs a stateful create.                                                           |
+        | CSFHL_CLAIM_NOT_SUPPORTED        | Simulates the scenario where carry-sideways-fhl claim submitted for income sources "FHL Property - EEA" and "UK Property FHL".|
+      tags:
+        - Loss Claims
+      parameters:
+        - name: nino
+          in: path
+          description: |
+            National Insurance number, in the format `AA999999A`.
+          schema: *ref_3
+          required: true
+        - name: Accept
+          in: header
+          description: |
+            Specifies the response format and the version of the API to be used.
+          schema: *ref_5
+          required: true
+        - name: Content-Type
+          in: header
+          description: |
+            Specifies the format of the request body, which must be JSON.
+          schema: *ref_6
+          required: true
+        - name: Authorization
+          in: header
+          description: |
+            An OAuth 2.0 Bearer Token with the *write:self-assessment* scope.
+          schema: *ref_7
+          required: true
+        - name: Gov-Test-Scenario
+          in: header
+          description: |
+            Only in sandbox environment. See Test Data table for all header values.
+          schema: *ref_8
+          required: false
+      security:
+        - User-Restricted:
+            - write:self-assessment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $schema: http://json-schema.org/draft-04/schema#
+              title: For all given tax year
+              description: Create a Loss Claim Request
+              type: object
+              properties:
+                taxYearClaimedFor:
+                  type: string
+                  description: The tax year to which the claim applies. The start year and end year must not span two tax years. The minimum tax year is 2019-20. No gaps are allowed, for example, 2022-24 is not valid.
+                  example: 2022-23
+                typeOfLoss:
+                  type: string
+                  enum:
+                    - self-employment
+                    - uk-property
+                    - foreign-property
+                  description: The type of business the loss applies to.
+                typeOfClaim:
+                  type: string
+                  description: 'The type of claim to be applied. Permitted values for "self-employment": carry-forward, carry-sideways. Permitted values for "uk-property" and "foreign-property": carry-sideways, carry-sideways-fhl, carry-forward-to-carry-sideways.'
+                  enum:
+                    - carry-forward
+                    - carry-sideways
+                    - carry-sideways-fhl
+                    - carry-forward-to-carry-sideways
+                businessId:
+                  type: string
+                  description: An identifier for the business, unique to the customer.
+                  example: XAIS12345678910
+                  pattern: ^X[A-Z0-9]{1}IS[0-9]{11}$
+              required:
+                - taxYearClaimedFor
+                - typeOfLoss
+                - typeOfClaim
+                - businessId
+              additionalProperties: false
+            examples:
+              example-1:
+                description: Self-Employment Claim Request
+                value:
+                  businessId: XBIS12356589871
+                  typeOfLoss: self-employment
+                  typeOfClaim: carry-forward
+                  taxYearClaimedFor: 2019-20
+              example-2:
+                description: UK Property Claim Request
+                value:
+                  businessId: XPIS12356589871
+                  typeOfLoss: uk-property
+                  typeOfClaim: carry-sideways
+                  taxYearClaimedFor: 2019-20
+              example-3:
+                description: Foreign Property Claim Request
+                value:
+                  businessId: XFIS12356589871
+                  typeOfLoss: foreign-property
+                  typeOfClaim: carry-sideways
+                  taxYearClaimedFor: 2019-20
+      responses:
+        '201':
+          description: Success
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                title: For all given tax year
+                description: Create a Loss Claim Response
+                type: object
+                properties:
+                  claimId:
+                    description: An identifier for the newly created loss claim.
+                    type: string
+                    pattern: ^[A-Za-z0-9]{15}$
+                    example: 1234568790ABCDE
+                required:
+                  - claimId
+                additionalProperties: false
+              examples:
+                example-1:
+                  description: Given any tax year
+                  value:
+                    claimId: AAZZ1234567890A
+        '400':
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value: *ref_9
+                FORMAT_TAX_YEAR:
+                  description: |
+                    The format of the supplied taxYearClaimedFor value is not valid.
+                  value: &ref_25
+                    code: FORMAT_TAX_YEAR
+                    message: The provided tax year claimed for is invalid
+                RULE_TAX_YEAR_NOT_SUPPORTED:
+                  description: |
+                    The specified tax year is not supported. The tax year specified is before the minimum tax year value.
+                  value: *ref_13
+                RULE_TAX_YEAR_RANGE_INVALID:
+                  description: |
+                    Tax year range invalid. A tax year range of one year is required.
+                  value: *ref_12
+                FORMAT_TYPE_OF_LOSS:
+                  description: |
+                    The format of the supplied type of loss field is not valid.
+                  value: *ref_19
+                FORMAT_TYPE_OF_CLAIM:
+                  description: |
+                    The format of the type of claim is not valid.
+                  value: &ref_26
+                    code: FORMAT_TYPE_OF_CLAIM
+                    message: The provided type of claim is invalid
+                FORMAT_BUSINESS_ID:
+                  description: |
+                    The format of the supplied Business ID field is not valid.
+                  value: *ref_20
+                RULE_TYPE_OF_CLAIM_INVALID:
+                  description: |
+                    The claim type supplied is not available for this type of loss.
+                  value: &ref_30
+                    code: RULE_TYPE_OF_CLAIM_INVALID
+                    message: The claim type supplied is not available for this type of loss
+                RULE_DUPLICATE_SUBMISSION:
+                  description: |
+                    The type of claim is the same as a previous submission for this income source.
+                  value:
+                    code: RULE_DUPLICATE_SUBMISSION
+                    message: This claim matches a previous submission
+                RULE_ACCOUNTING_PERIOD_NOT_ENDED:
+                  description: |
+                    The accounting period has not yet ended.
+                  value:
+                    code: RULE_ACCOUNTING_PERIOD_NOT_ENDED
+                    message: The accounting period has not yet ended
+                RULE_NO_ACCOUNTING_PERIOD:
+                  description: |
+                    There is no accounting period for the year of the claim.
+                  value:
+                    code: RULE_NO_ACCOUNTING_PERIOD
+                    message: For the year of the claim there is no accounting period
+                RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED:
+                  description: |
+                    An empty or non-matching body was submitted.
+                  value: *ref_14
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: |
+                    The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for 
+                    this endpoint version. This error will only be returned in the Sandbox environment.
+                  value: *ref_15
+                RULE_CSFHL_CLAIM_NOT_SUPPORTED:
+                  description: |
+                    carry-sideways-fhl claim for income sources "FHL Property - EEA" and "UK Property FHL" will not be supported from tax year 25/26.
+                  value: &ref_31
+                    code: RULE_CSFHL_CLAIM_NOT_SUPPORTED
+                    message: carry-sideways-fhl claim for income sources foreign-property-fhl-eea and uk-property-fhl will not be supported from tax year 25/26
+                RULE_OUTSIDE_AMENDMENT_WINDOW:
+                  description: |
+                    The request cannot be completed as you are outside the amendment window.
+                  value: *ref_16
+        '403':
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value: *ref_17
+        '404':
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                MATCHING_RESOURCE_NOT_FOUND:
+                  description: |
+                    Matching resource not found.
+                  value: *ref_18
+  /individuals/losses/{nino}/loss-claims/tax-year/{taxYearClaimedFor}:
+    get:
+      summary: List Loss Claims
+      description: |
+        This endpoint enables you to retrieve the existing loss claims information.
+        A National Insurance Number and tax year must be provided.
+
+        <strong>
+          Note: carry-sideways-fhl type of loss claims for income sources uk-property-fhl and foreign-property-fhl-eea will not be supported from tax year 2025-26 onwards.
+        </strong>
+
+        ### Test data
+        Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+        | Header Value (Gov-Test-Scenario) | Scenario                                                                                                                                                                                       |
+        | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+        | N/A - DEFAULT                    | Simulates successful self-employment response where typeOfClaim is "carry-forward".                                                                                                            |
+        | UK_PROPERTY                      | Simulates successful uk-property response where typeOfClaim is "carry-sideways-fhl".                                                                                                   |
+        | FOREIGN_PROPERTY                 | Simulates successful foreign property response where typeOfClaim is "carry-sideways".                                                                                                          |
+        | NOT_FOUND                        | Simulates the scenario where no data is found.                                                                                                                                                 |
+        | DYNAMIC                          | The following response values will change to correspond to the values submitted in the request:<br> • taxYearClaimedFor<br> • lastModified<br> • typeOfLoss<br> • typeOfClaim<br> • businessId |
+        | STATEFUL                         | Performs a stateful list.                                                                                                                                                                      |
+      tags:
+        - Loss Claims
+      parameters:
+        - name: nino
+          in: path
+          description: |
+            National Insurance number, in the format `AA999999A`.
+          schema: *ref_3
+          required: true
+        - name: taxYearClaimedFor
+          in: path
+          description: |
+            The tax year to which the claim applies. The start year and end year must not span two tax years. The minimum tax year is 2019-20. No gaps are allowed, for example, 2022-24 is not valid.
+          schema: &ref_28
+            type: string
+            example: 2019-20
+            pattern: ^2[0-9]{3}-[0-9]{2}$
+          required: true
+        - in: query
+          name: businessId
+          description: |
+            An identifier for the business, unique to the customer.
+          schema: *ref_24
+          required: false
+        - in: query
+          name: typeOfLoss
+          description: |
+            The type of business the loss applies to.
+          schema:
+            type: string
+            enum:
+              - self-employment
+              - uk-property
+              - foreign-property
+            example: self-employment
+          required: false
+        - in: query
+          name: typeOfClaim
+          description: |
+            The type of claim to be applied. If no parameter value is supplied, all claim types (carry-forward and carry-sideways) will be returned.
+          schema:
+            type: string
+            enum:
+              - carry-sideways
+            example: carry-sideways
+          required: false
+        - name: Accept
+          in: header
+          description: |
+            Specifies the response format and the version of the API to be used.
+          schema: *ref_5
+          required: true
+        - name: Authorization
+          in: header
+          description: |
+            An OAuth 2.0 Bearer Token with the *read:self-assessment* scope.
+          schema: *ref_22
+          required: true
+        - name: Gov-Test-Scenario
+          in: header
+          description: |
+            Only in sandbox environment. See Test Data table for all header values.
+          schema: *ref_8
+          required: false
+      security:
+        - User-Restricted:
+            - read:self-assessment
+      responses:
+        '200':
+          description: Success
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                title: For all given tax year
+                description: List of Loss Claims
+                type: object
+                properties:
+                  claims:
+                    type: array
+                    items:
+                      type: object
+                      description: An array of loss claim objects. An empty array is not returned, if no loss claims exist for the supplied NINO, a MATCHING_RESOURCE_NOT_FOUND error is returned.
+                      properties:
+                        businessId:
+                          description: An identifier for the business, unique to the customer.
+                          type: string
+                          pattern: ^X[A-Z0-9]{1}IS[0-9]{11}$
+                          example: XAIS12345678910
+                        typeOfLoss:
+                          type: string
+                          enum:
+                            - self-employment
+                            - uk-property
+                            - foreign-property
+                          description: The type of business the loss applies to.
+                        typeOfClaim:
+                          type: string
+                          enum:
+                            - carry-forward
+                            - carry-sideways
+                            - carry-sideways-fhl
+                            - carry-forward-to-carry-sideways
+                          description: 'The type of claim to be applied. Permitted values for "self-employment": carry-forward, carry-sideways. Permitted values for "uk-property" and "foreign-property": carry-sideways, carry-sideways-fhl, carry-forward-to-carry-sideways.'
+                        taxYearClaimedFor:
+                          type: string
+                          description: The tax year to which the claim applies. The start year and end year must not span two tax years. The minimum tax year is 2019-20. No gaps are allowed, for example, 2022-24 is not valid.
+                          example: 2022-23
+                        claimId:
+                          type: string
+                          description: 'Unique identifier for the loss claim. '
+                          example: AAZZ0123456789a
+                        sequence:
+                          type: number
+                          description: The order number in which this loss claim is to be used it must be an integer in the range 1 to 99. The sequence must start with 1 and have no gaps.
+                        lastModified:
+                          type: string
+                          description: The timestamp when the entry was created or last modified.
+                          example: '2020-07-13T12:13:48.763Z'
+                      required:
+                        - businessId
+                        - typeOfLoss
+                        - typeOfClaim
+                        - taxYearClaimedFor
+                        - claimId
+                        - lastModified
+                      additionalProperties: false
+                required:
+                  - claims
+                additionalProperties: false
+              examples:
+                example-1:
+                  description: Self-Employment Loss Claim
+                  value:
+                    claims:
+                      - businessId: XBIS12356589871
+                        typeOfLoss: self-employment
+                        typeOfClaim: carry-sideways
+                        taxYearClaimedFor: 2019-20
+                        claimId: AAZZ0123456789a
+                        sequence: 1
+                        lastModified: '2020-07-13T12:13:48.763Z'
+                example-2:
+                  description: UK Property Loss Claim
+                  value:
+                    claims:
+                      - businessId: XPIS12356589871
+                        typeOfLoss: uk-property
+                        typeOfClaim: carry-sideways
+                        taxYearClaimedFor: 2019-20
+                        claimId: AAZZ0123456789a
+                        sequence: 1
+                        lastModified: '2020-07-13T12:13:48.763Z'
+                example-3:
+                  description: Foreign Property Loss Claim
+                  value:
+                    claims:
+                      - businessId: XFIS12356589871
+                        typeOfLoss: foreign-property
+                        typeOfClaim: carry-sideways
+                        taxYearClaimedFor: 2019-20
+                        claimId: AAZZ0123456789a
+                        sequence: 1
+                        lastModified: '2020-07-13T12:13:48.763Z'
+        '400':
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value: *ref_9
+                FORMAT_TAX_YEAR:
+                  description: |
+                    The format of the supplied taxYearClaimedFor value is not valid.
+                  value: *ref_25
+                RULE_TAX_YEAR_NOT_SUPPORTED:
+                  description: |
+                    The specified tax year is not supported. The tax year specified is before the minimum tax year value.
+                  value: *ref_13
+                RULE_TAX_YEAR_RANGE_INVALID:
+                  description: |
+                    Tax year range invalid. A tax year range of one year is required.
+                  value: *ref_12
+                FORMAT_TYPE_OF_CLAIM:
+                  description: |
+                    The format of the type of claim is not valid.
+                  value: *ref_26
+                FORMAT_TYPE_OF_LOSS:
+                  description: |
+                    The format of the supplied type of loss field is not valid.
+                  value: *ref_19
+                FORMAT_BUSINESS_ID:
+                  description: |
+                    The format of the supplied Business ID field is not valid.
+                  value: *ref_20
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: |
+                    The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for 
+                    this endpoint version. This error will only be returned in the Sandbox environment.
+                  value: *ref_15
+        '403':
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value: *ref_17
+        '404':
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                MATCHING_RESOURCE_NOT_FOUND:
+                  description: |
+                    Matching resource not found.
+                  value: *ref_18
+  /individuals/losses/{nino}/loss-claims/{claimId}:
+    get:
+      summary: Retrieve a Loss Claim
+      description: |
+        This endpoint allows a developer to retrieve the detail of an existing loss claim.
+        A National Insurance Number and Claim ID must be provided.
+
+        <strong>
+          Note: carry-sideways-fhl type of loss claims for income sources uk-property-fhl and foreign-property-fhl-eea will not be supported from tax year 2025-26 onwards.
+        </strong>
+
+        ### Test data
+        Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+        | Header Value (Gov-Test-Scenario) | Scenario                                                                                     |
+        | -------------------------------- | -------------------------------------------------------------------------------------------- |
+        | N/A - DEFAULT                    | Simulates successful self-employment response where typeOfClaim is "carry-forward".          |
+        | UK_PROPERTY                      | Simulates successful uk-property response where typeOfClaim is "carry-sideways-fhl".         |
+        | FOREIGN_PROPERTY                 | Simulates successful foreign-property response where typeOfClaim is "carry-sideways".        |
+        | NOT_FOUND                        | Simulates the scenario where no data is found.                                               |
+        | STATEFUL                         | Performs a stateful retrieve.                                                                |
+      tags:
+        - Loss Claims
+      parameters:
+        - name: nino
+          in: path
+          description: |
+            National Insurance number, in the format `AA999999A`.
+          schema: *ref_3
+          required: true
+        - name: claimId
+          in: path
+          description: |
+            Unique identifier for the loss claim.
+          schema: &ref_27
+            type: string
+            example: AAZZ0123456789a
+            pattern: ^[A-Za-z0-9]{15}$
+          required: true
+        - name: Accept
+          in: header
+          description: |
+            Specifies the response format and the version of the API to be used.
+          schema: *ref_5
+          required: true
+        - name: Authorization
+          in: header
+          description: |
+            An OAuth 2.0 Bearer Token with the *read:self-assessment* scope.
+          schema: *ref_22
+          required: true
+        - name: Gov-Test-Scenario
+          in: header
+          description: |
+            Only in sandbox environment. See Test Data table for all header values.
+          schema: *ref_8
+          required: false
+      security:
+        - User-Restricted:
+            - read:self-assessment
+      responses:
+        '200':
+          description: Success
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                title: For all given tax year
+                description: Retrieve a Loss Claim Response
+                type: object
+                properties:
+                  taxYearClaimedFor:
+                    type: string
+                    description: The tax year to which the claim applies. The start year and end year must not span two tax years. The minimum tax year is 2019-20. No gaps are allowed, for example, 2022-24 is not valid.
+                    example: 2022-23
+                  typeOfLoss:
+                    type: string
+                    enum:
+                      - self-employment
+                      - uk-property
+                      - foreign-property
+                    description: The type of business the loss applies to.
+                  typeOfClaim:
+                    type: string
+                    enum:
+                      - carry-forward
+                      - carry-sideways
+                      - carry-sideways-fhl
+                      - carry-forward-to-carry-sideways
+                    description: 'The type of claim to be applied. Permitted values for "self-employment": carry-forward, carry-sideways. Permitted values for "uk-property" and "foreign-property": carry-sideways, carry-sideways-fhl, carry-forward-to-carry-sideways.'
+                  businessId:
+                    type: string
+                    description: An identifier for the business, unique to the customer.
+                    example: XAIS12345678910
+                    pattern: ^X[A-Z0-9]{1}IS[0-9]{11}$
+                  sequence:
+                    type: number
+                    description: The order number in which this loss claim is to be used it must be an integer in the range 1 to 99. The sequence must start with 1 and have no gaps.
+                  lastModified:
+                    type: string
+                    description: The timestamp when the entry was created or last modified.
+                    example: '2020-07-13T12:13:48.763Z'
+                required:
+                  - taxYearClaimedFor
+                  - typeOfLoss
+                  - typeOfClaim
+                  - businessId
+                  - lastModified
+                additionalProperties: false
+              examples:
+                example-1:
+                  description: Self-Employment Loss Claim
+                  value:
+                    taxYearClaimedFor: 2021-22
+                    typeOfLoss: self-employment
+                    typeOfClaim: carry-sideways
+                    businessId: XBIS12356589871
+                    sequence: 1
+                    lastModified: '2022-07-13T12:13:48.763Z'
+                example-2:
+                  description: UK Property Loss Claim
+                  value:
+                    taxYearClaimedFor: 2021-22
+                    typeOfLoss: uk-property
+                    typeOfClaim: carry-sideways
+                    businessId: XPIS12356589871
+                    sequence: 1
+                    lastModified: '2022-07-13T12:13:48.763Z'
+                example-3:
+                  description: Foreign Property Loss Claim
+                  value:
+                    taxYearClaimedFor: 2021-22
+                    typeOfLoss: foreign-property
+                    typeOfClaim: carry-sideways
+                    businessId: XFIS12356589871
+                    sequence: 1
+                    lastModified: '2022-07-13T12:13:48.763Z'
+        '400':
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value: *ref_9
+                FORMAT_CLAIM_ID:
+                  description: |
+                    The format of the supplied Claim ID is not valid.
+                  value: &ref_29
+                    code: FORMAT_CLAIM_ID
+                    message: The provided Claim ID is invalid
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: |
+                    The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for 
+                    this endpoint version. This error will only be returned in the Sandbox environment.
+                  value: *ref_15
+        '403':
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value: *ref_17
+        '404':
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                MATCHING_RESOURCE_NOT_FOUND:
+                  description: |
+                    Matching resource not found.
+                  value: *ref_18
+  /individuals/losses/{nino}/loss-claims/{claimId}/tax-year/{taxYearClaimedFor}:
+    delete:
+      summary: Delete a Loss Claim
+      description: |
+        This endpoint allows a developer to delete an existing Loss Claim.
+        A National Insurance number, tax year and Claim ID must be provided.
+
+        ### Test data
+        Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+        | Header Value (Gov-Test-Scenario) | Scenario                                       |
+        | -------------------------------- | ---------------------------------------------- |
+        | N/A - DEFAULT                    | Simulate success scenario                      |
+        | NOT_FOUND                        | Simulates the scenario where no data is found. |
+        | OUTSIDE_AMENDMENT_WINDOW         | Simulates the scenario where request cannot be completed as it is outside the amendment window. |
+        | STATEFUL                         | Performs a stateful delete.                    |
+      tags:
+        - Loss Claims
+      parameters:
+        - name: nino
+          in: path
+          description: |
+            National Insurance number, in the format `AA999999A`.
+          schema: *ref_3
+          required: true
+        - name: claimId
+          in: path
+          description: |
+            Unique identifier for the loss claim.
+          schema: *ref_27
+          required: true
+        - name: taxYearClaimedFor
+          in: path
+          description: |
+            The tax year to which the claim applies. The start year and end year must not span two tax years. The minimum tax year is 2019-20. No gaps are allowed, for example, 2022-24 is not valid.
+          schema: *ref_28
+          required: true
+        - name: Accept
+          in: header
+          description: |
+            Specifies the response format and the version of the API to be used.
+          schema: *ref_5
+          required: true
+        - name: Authorization
+          in: header
+          description: |
+            An OAuth 2.0 Bearer Token with the *write:self-assessment* scope.
+          schema: *ref_7
+          required: true
+        - name: Gov-Test-Scenario
+          in: header
+          description: |
+            Only in sandbox environment. See Test Data table for all header values.
+          schema: *ref_8
+          required: false
+      security:
+        - User-Restricted:
+            - write:self-assessment
+      responses:
+        '204':
+          description: Success (No Content)
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content: {}
+        '400':
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value: *ref_9
+                FORMAT_TAX_YEAR:
+                  description: |
+                    The format of the supplied taxYearClaimedFor value is not valid.
+                  value: *ref_25
+                RULE_TAX_YEAR_NOT_SUPPORTED:
+                  description: |
+                    The specified tax year is not supported. The tax year specified is before the minimum tax year value.
+                  value: *ref_13
+                RULE_TAX_YEAR_RANGE_INVALID:
+                  description: |
+                    Tax year range invalid. A tax year range of one year is required.
+                  value: *ref_12
+                FORMAT_CLAIM_ID:
+                  description: |
+                    The format of the supplied Claim ID is not valid.
+                  value: *ref_29
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: |
+                    The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for 
+                    this endpoint version. This error will only be returned in the Sandbox environment.
+                  value: *ref_15
+                RULE_OUTSIDE_AMENDMENT_WINDOW:
+                  description: |
+                    The request cannot be completed as you are outside the amendment window.
+                  value: *ref_16
+        '403':
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value: *ref_17
+        '404':
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                MATCHING_RESOURCE_NOT_FOUND:
+                  description: |
+                    Matching resource not found.
+                  value: *ref_18
+  /individuals/losses/{nino}/loss-claims/{claimId}/tax-year/{taxYearClaimedFor}/change-type-of-claim:
+    post:
+      summary: Amend a Loss Claim Type
+      description: |
+        This endpoint enables you to change the type of claim for an existing loss claim type.
+        A National Insurance Number, tax year and Claim ID must be provided.
+
+        <strong>
+          Note: carry-sideways-fhl type of loss claims for income sources uk-property-fhl and foreign-property-fhl-eea will not be supported from tax year 2025-26 onwards.
+        </strong>
+
+        ### Test data
+        Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+        | Header Value (Gov-Test-Scenario) | Scenario                                                                                                                                               |
+        | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+        | N/A - DEFAULT                    | Simulates success response.                                                                                                                            |
+        | FP_FORWARD                       | Simulates a Foreign Property carried forward scenario.                                                                                                 |
+        | FP_SIDEWAYS                      | Simulates a Foreign Property carried sideways scenario.                                                                                                |
+        | UK_FORWARD                       | Simulates a UK Property (Non-FHL) carried forward scenario.                                                                                            |
+        | UK_FORWARD_TO_SIDEWAYS           | Simulates a UK Property (Non-FHL) carried forward to sideways scenario.                                                                                |
+        | UK_SIDEWAYS                      | Simulates a UK Property (Non-FHL) carried sideways scenario.                                                                                           |
+        | UK_SIDEWAYS_FHL                  | Simulates a UK Property FHL carried sideways scenario.                                                                                                 |
+        | SE_FORWARD                       | Simulates a Self Employment carried forward scenario.                                                                                                  |
+        | SE_SIDEWAYS                      | Simulates a Self Employment carried sideways scenario.                                                                                                 |
+        | NO_CHANGE                        | Simulates the scenario where the relief type has not changed.                                                                                          |
+        | TYPE_OF_CLAIM_INVALID            | Simulates the scenario where a claim type is invalid for the income source.                                                                            |         
+        | CSFHL_CLAIM_NOT_SUPPORTED        | Simulates the scenario where carry-sideways-fhl claim submitted for income sources "FHL Property - EEA" and "UK Property FHL".                         |
+        | NOT_FOUND                        | Simulates the scenario where no data is found.                                                                                                         |
+        | OUTSIDE_AMENDMENT_WINDOW         | Simulates the scenario where request cannot be completed as it is outside the amendment window.                                                        |
+        | STATEFUL                         | Performs a stateful update.                                                                                                                            |
+        | DYNAMIC                          | The following response values will change to correspond to the values submitted in the request:<br> • typeOfClaim<br> •  typeOfLoss<br> • lastModified |
+      tags:
+        - Loss Claims
+      parameters:
+        - name: nino
+          in: path
+          description: |
+            National Insurance number, in the format `AA999999A`.
+          schema: *ref_3
+          required: true
+        - name: claimId
+          in: path
+          description: |
+            Unique identifier for the loss claim.
+          schema: *ref_27
+          required: true
+        - name: taxYearClaimedFor
+          in: path
+          description: |
+            The tax year to which the claim applies. The start year and end year must not span two tax years. The minimum tax year is 2019-20. No gaps are allowed, for example, 2022-24 is not valid.
+          schema: *ref_28
+          required: true
+        - name: Accept
+          in: header
+          description: |
+            Specifies the response format and the version of the API to be used.
+          schema: *ref_5
+          required: true
+        - name: Content-Type
+          in: header
+          description: |
+            Specifies the format of the request body, which must be JSON.
+          schema: *ref_6
+          required: true
+        - name: Authorization
+          in: header
+          description: |
+            An OAuth 2.0 Bearer Token with the *write:self-assessment* scope.
+          schema: *ref_7
+          required: true
+        - name: Gov-Test-Scenario
+          in: header
+          description: |
+            Only in sandbox environment. See Test Data table for all header values.
+          schema: *ref_8
+          required: false
+      security:
+        - User-Restricted:
+            - write:self-assessment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $schema: http://json-schema.org/draft-04/schema#
+              title: For all given tax year
+              description: Amend a Loss Claim Type Request
+              type: object
+              properties:
+                typeOfClaim:
+                  type: string
+                  description: 'The type of claim to be applied. Permitted values for "self-employment": carry-forward, carry-sideways. Permitted values for "uk-property" and "foreign-property": carry-sideways, carry-sideways-fhl, carry-forward-to-carry-sideways.'
+                  example: carry-forward
+              required:
+                - typeOfClaim
+              additionalProperties: false
+            examples:
+              example-1:
+                description: Given any tax year
+                value:
+                  typeOfClaim: carry-forward
+      responses:
+        '200':
+          description: Success
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                title: For all given tax year
+                description: Retrieve a Loss Claim Response
+                type: object
+                properties:
+                  taxYearClaimedFor:
+                    type: string
+                    description: The tax year to which the claim applies. The start year and end year must not span two tax years. The minimum tax year is 2019-20. No gaps are allowed, for example, 2022-24 is not valid.
+                    example: 2022-23
+                  typeOfLoss:
+                    type: string
+                    enum:
+                      - self-employment
+                      - uk-property
+                      - foreign-property
+                    description: The type of business the loss applies to.
+                  typeOfClaim:
+                    type: string
+                    enum:
+                      - carry-forward
+                      - carry-sideways
+                      - carry-sideways-fhl
+                      - carry-forward-to-carry-sideways
+                    description: 'The type of claim to be applied. Permitted values for "self-employment": carry-forward, carry-sideways. Permitted values for "uk-property" and "foreign-property": carry-sideways, carry-sideways-fhl, carry-forward-to-carry-sideways.'
+                  businessId:
+                    type: string
+                    description: An identifier for the business, unique to the customer.
+                    example: XAIS12345678910
+                    pattern: ^X[A-Z0-9]{1}IS[0-9]{11}$
+                  sequence:
+                    type: number
+                    description: The order number in which this loss claim is to be used it must be an integer in the range 1 to 99. The sequence must start with 1 and have no gaps.
+                  lastModified:
+                    type: string
+                    description: The timestamp when the entry was created or last modified.
+                    example: '2020-07-13T12:13:48.763Z'
+                required:
+                  - taxYearClaimedFor
+                  - typeOfLoss
+                  - typeOfClaim
+                  - businessId
+                  - lastModified
+                additionalProperties: false
+              examples:
+                example-1:
+                  description: Given any tax year
+                  value:
+                    typeOfLoss: self-employment
+                    businessId: X2IS12356589871
+                    typeOfClaim: carry-forward
+                    taxYearClaimedFor: 2019-20
+                    sequence: 2
+                    lastModified: '2020-07-13T12:13:48.763Z'
+        '400':
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value: *ref_9
+                FORMAT_CLAIM_ID:
+                  description: |
+                    The format of the supplied Claim ID is not valid.
+                  value: *ref_29
+                FORMAT_TAX_YEAR:
+                  description: |
+                    The format of the supplied taxYearClaimedFor value is not valid.
+                  value: *ref_25
+                FORMAT_VALUE:
+                  description: |
+                    One or more values have been added with the incorrect format.
+                  value: *ref_11
+                RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED:
+                  description: |
+                    An empty or non-matching body was submitted.
+                  value: *ref_14
+                FORMAT_TYPE_OF_CLAIM:
+                  description: |
+                    The format of the type of claim is not valid.
+                  value: *ref_26
+                RULE_TYPE_OF_CLAIM_INVALID:
+                  description: |
+                    The claim type supplied is not available for this type of loss.
+                  value: *ref_30
+                RULE_CSFHL_CLAIM_NOT_SUPPORTED:
+                  description: |
+                    carry-sideways-fhl claim for income sources "FHL Property - EEA" and "UK Property FHL" will not be supported from tax year 25/26.
+                  value: *ref_31
+                RULE_NO_CHANGE:
+                  description: |
+                    The loss amount supplied is the same as the existing stored loss amount.
+                  value:
+                    code: RULE_NO_CHANGE
+                    message: This claim matches a previous submission
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: |
+                    The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for 
+                    this endpoint version. This error will only be returned in the Sandbox environment.
+                  value: *ref_15
+                RULE_OUTSIDE_AMENDMENT_WINDOW:
+                  description: |
+                    The request cannot be completed as you are outside the amendment window.
+                  value: *ref_16
+                RULE_TAX_YEAR_NOT_SUPPORTED:
+                  description: |
+                    The specified tax year is not supported. The tax year specified is before the minimum tax year value.
+                  value: *ref_13
+                RULE_TAX_YEAR_RANGE_INVALID:
+                  description: |
+                    Tax year range invalid. A tax year range of one year is required.
+                  value: *ref_12
+        '403':
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value: *ref_17
+        '404':
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                MATCHING_RESOURCE_NOT_FOUND:
+                  description: |
+                    Matching resource not found.
+                  value: *ref_18
+  /individuals/losses/{nino}/loss-claims/order/{taxYearClaimedFor}:
+    put:
+      summary: Amend Loss Claims Order
+      tags:
+        - Loss Claims
+      security:
+        - User-Restricted:
+            - write:self-assessment
+      description: |
+        This endpoint allows the developer to change the sequence in which carry sideways losses are used. 
+        A National Insurance Number and tax year must be provided.
+
+        ### Test data
+        Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+        | Header Value (Gov-Test-Scenario) | Scenario                                                                              |
+        | -------------------------------- | ------------------------------------------------------------------------------------- |
+        | N/A - DEFAULT                    | Simulates success response.                                                           |
+        | LOSS_CLAIMS_MISSING              | Simulates the scenario where not all claims of the given type and year were included. |
+        | NOT_FOUND                        | Simulates the scenario where one or more claims were not found.                       |
+        | OUTSIDE_AMENDMENT_WINDOW         | Simulates the scenario where request cannot be completed as it is outside the amendment window. |
+        | STATEFUL                         | Performs a stateful update.                                                           |
+      parameters:
+        - name: nino
+          in: path
+          description: |
+            National Insurance number, in the format `AA999999A`.
+          schema: *ref_3
+          required: true
+        - name: taxYearClaimedFor
+          in: path
+          description: |
+            The tax year to which the claim applies. The start year and end year must not span two tax years. The minimum tax year is 2019-20. No gaps are allowed, for example, 2022-24 is not valid.
+          schema: *ref_28
+          required: true
+        - name: Accept
+          in: header
+          description: |
+            Specifies the response format and the version of the API to be used.
+          schema: *ref_5
+          required: true
+        - name: Content-Type
+          in: header
+          description: |
+            Specifies the format of the request body, which must be JSON.
+          schema: *ref_6
+          required: true
+        - name: Authorization
+          in: header
+          description: |
+            An OAuth 2.0 Bearer Token with the *write:self-assessment* scope.
+          schema: *ref_7
+          required: true
+        - name: Gov-Test-Scenario
+          in: header
+          description: |
+            Only in sandbox environment. See Test Data table for all header values.
+          schema: *ref_8
+          required: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $schema: http://json-schema.org/draft-04/schema#
+              title: For all given tax year
+              description: Amend Loss Claims Order
+              type: object
+              properties:
+                typeOfClaim:
+                  type: string
+                  description: The type of loss claims whose order is to be amended.
+                  enum:
+                    - carry-sideways
+                listOfLossClaims:
+                  type: array
+                  description: A list of the claims to be amended - all of the claims for a given type and tax year must be included in the submission.
+                  items:
+                    type: object
+                    properties:
+                      claimId:
+                        description: The unique identifier for the loss claim.
+                        pattern: ^[A-Za-z0-9]{15}
+                        type: string
+                        example: 1234568790ABCDE
+                      sequence:
+                        description: The order number in which this loss claim is to be used. It must be an integer in the range 1 to 99. The sequence must start with 1 and have no gaps.
+                        type: integer
+                        example: '1'
+                    required:
+                      - claimId
+                      - sequence
+                    additionalProperties: false
+              required:
+                - typeOfClaim
+                - listOfLossClaims
+              additionalProperties: false
+            examples:
+              example-1:
+                description: Given any tax year
+                value:
+                  typeOfClaim: carry-sideways
+                  listOfLossClaims:
+                    - claimId: 1234567890ABCDE
+                      sequence: 2
+                    - claimId: 1234567890ABDE0
+                      sequence: 3
+                    - claimId: 1234567890ABEF1
+                      sequence: 1
+      responses:
+        '200':
+          description: Success
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+        '400':
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value: *ref_9
+                FORMAT_TAX_YEAR:
+                  description: |
+                    The format of the supplied taxYearClaimedFor value is not valid.
+                  value: *ref_25
+                RULE_TAX_YEAR_NOT_SUPPORTED:
+                  description: |
+                    The specified tax year is not supported. The tax year specified is before the minimum tax year value.
+                  value: *ref_13
+                RULE_TAX_YEAR_RANGE_INVALID:
+                  description: |
+                    Tax year range invalid. A tax year range of one year is required.
+                  value: *ref_12
+                FORMAT_CLAIM_ID:
+                  description: |
+                    The format of the supplied Claim ID is not valid.
+                  value: *ref_29
+                FORMAT_TYPE_OF_CLAIM:
+                  description: |
+                    The format of the type of claim is not valid.
+                  value: *ref_26
+                FORMAT_VALUE:
+                  description: |
+                    One or more values have been added with the incorrect format.
+                  value: *ref_11
+                RULE_INVALID_SEQUENCE_START:
+                  description: |
+                    The sequence does not begin with 1.
+                  value:
+                    code: RULE_INVALID_SEQUENCE_START
+                    message: The sequence must start with 1
+                RULE_SEQUENCE_ORDER_BROKEN:
+                  description: |
+                    The sequence is not continuous.
+                  value:
+                    code: RULE_SEQUENCE_ORDER_BROKEN
+                    message: The sequence order must be continuous
+                RULE_LOSS_CLAIMS_MISSING:
+                  description: |
+                    Not all of the loss claims of this type for this tax year were included in the submission.
+                  value:
+                    code: RULE_LOSS_CLAIMS_MISSING
+                    message: One or more loss claims missing from this request
+                RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED:
+                  description: |
+                    An empty or non-matching body was submitted.
+                  value: *ref_14
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: |
+                    The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for 
+                    this endpoint version. This error will only be returned in the Sandbox environment.
+                  value: *ref_15
+                RULE_OUTSIDE_AMENDMENT_WINDOW:
+                  description: |
+                    The request cannot be completed as you are outside the amendment window.
+                  value: *ref_16
+        '403':
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value: *ref_17
+        '404':
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_1
+                required: *ref_2
+              examples:
+                MATCHING_RESOURCE_NOT_FOUND:
+                  description: |
+                    Matching resource not found.
+                  value: *ref_18
+components:
+  securitySchemes:
+    User-Restricted:
+      type: oauth2
+      description: HMRC supports OAuth 2.0 for authenticating [User-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) API requests
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.service.hmrc.gov.uk/oauth/authorize
+          tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
+          refreshUrl: https://api.service.hmrc.gov.uk/oauth/refresh
+          scopes:
+            write:self-assessment: Grant write access
+            read:self-assessment: Grant read access
