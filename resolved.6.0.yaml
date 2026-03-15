@@ -47,9 +47,11 @@ paths:
         UK Furnished Holiday Let (FHL) property, UK other (Non-FHL) property, foreign\
         \ property FHL in the European Economic Area (EEA) and foreign property for\
         \ the tax year prior to joining MTD.\nA National Insurance number and tax\
-        \ year must be provided.\n\n<strong>\n  Note: Brought forward losses for the\
-        \ following 2 income sources will not be supported from tax year 2025-26 onwards:\n\
-        \    <ul>\n      <li>uk-property-fhl</li>\n      <li>foreign-property-fhl-eea</li>\n\
+        \ year must be provided.\n\n> <strong>This endpoint supports tax years up\
+        \ to, and including, 2025-26. For tax years 2026–27 onwards, a new version\
+        \ is in development.</strong>\n\n<strong>\n  Note: Brought forward losses\
+        \ for the following 2 income sources will not be supported from tax year 2025-26\
+        \ onwards:\n    <ul>\n      <li>uk-property-fhl</li>\n      <li>foreign-property-fhl-eea</li>\n\
         \    </ul>\n</strong>    \n\n### Test data\nScenario simulation using Gov-Test-Scenario\
         \ headers is only available in the sandbox environment.    \n\n| Header Value\
         \ (Gov-Test-Scenario)     | Scenario                                     \
@@ -263,6 +265,15 @@ paths:
                     code: RULE_TAX_YEAR_NOT_SUPPORTED
                     message: The tax year specified does not lie within the supported
                       range
+                RULE_TAX_YEAR_FOR_VERSION_NOT_SUPPORTED:
+                  description: "This version of the API supports tax years up to,\
+                    \ and including, 2025-26. For tax years 2026–27 onwards, a new\
+                    \ version is in development."
+                  value:
+                    code: RULE_TAX_YEAR_FOR_VERSION_NOT_SUPPORTED
+                    message: "This version of the API supports tax years up to, and\
+                      \ including, 2025-26. For tax years 2026–27 onwards, a new version\
+                      \ is in development"
                 FORMAT_VALUE:
                   description: |
                     One or more values have been added with the incorrect format.
@@ -396,14 +407,15 @@ paths:
       summary: Amend a Brought Forward Loss Amount
       description: "This endpoint enables you to update an existing brought forward\
         \ loss amount.\nA National Insurance number, tax year and Loss ID must be\
-        \ provided.\n\n<strong>\n  Note: Brought forward losses for the following\
-        \ 2 income sources will not be supported from tax year 2025-26 onwards:\n\
-        \    <ul>\n      <li>uk-property-fhl</li>\n      <li>foreign-property-fhl-eea</li>\n\
-        \    </ul>\n</strong>\n\n### Test data\nScenario simulation using Gov-Test-Scenario\
-        \ headers is only available in the sandbox environment.    \n\n| Header Value\
-        \ (Gov-Test-Scenario)  | Scenario                                        \
-        \                                                                        \
-        \            |\n|-----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|\n\
+        \ provided.\n\n> <strong>This endpoint supports tax years up to, and including,\
+        \ 2025-26. For tax years 2026–27 onwards, a new version is in development.</strong>\n\
+        \n<strong>\n  Note: Brought forward losses for the following 2 income sources\
+        \ will not be supported from tax year 2025-26 onwards:\n    <ul>\n      <li>uk-property-fhl</li>\n\
+        \      <li>foreign-property-fhl-eea</li>\n    </ul>\n</strong>\n\n### Test\
+        \ data\nScenario simulation using Gov-Test-Scenario headers is only available\
+        \ in the sandbox environment.    \n\n| Header Value (Gov-Test-Scenario)  |\
+        \ Scenario                                                               \
+        \                                                             |\n|-----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|\n\
         | N/A - DEFAULT                     | Simulates success response where type\
         \ of loss is Self-Employment.                                            \
         \                       |\n| CLASS_4                           | Simulates\
@@ -652,6 +664,15 @@ paths:
                     code: RULE_TAX_YEAR_NOT_SUPPORTED
                     message: The tax year specified does not lie within the supported
                       range
+                RULE_TAX_YEAR_FOR_VERSION_NOT_SUPPORTED:
+                  description: "This version of the API supports tax years up to,\
+                    \ and including, 2025-26. For tax years 2026–27 onwards, a new\
+                    \ version is in development."
+                  value:
+                    code: RULE_TAX_YEAR_FOR_VERSION_NOT_SUPPORTED
+                    message: "This version of the API supports tax years up to, and\
+                      \ including, 2025-26. For tax years 2026–27 onwards, a new version\
+                      \ is in development"
                 RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED:
                   description: |
                     An empty or non-matching body was submitted.
@@ -754,6 +775,8 @@ paths:
       description: |
         This endpoint enables you to retrieve a list of all brought forward losses that have incurred before joining MTD.
         A National Insurance number and tax year must be provided.
+
+        > <strong>This endpoint supports tax years up to, and including, 2025-26. For tax years 2026–27 onwards, a new version is in development.</strong>
 
         <strong>
           Note: Brought forward losses for the following 2 income sources will not be supported from tax year 2025-26 onwards:
@@ -976,6 +999,15 @@ paths:
                     code: RULE_TAX_YEAR_NOT_SUPPORTED
                     message: The tax year specified does not lie within the supported
                       range
+                RULE_TAX_YEAR_FOR_VERSION_NOT_SUPPORTED:
+                  description: "This version of the API supports tax years up to,\
+                    \ and including, 2025-26. For tax years 2026–27 onwards, a new\
+                    \ version is in development."
+                  value:
+                    code: RULE_TAX_YEAR_FOR_VERSION_NOT_SUPPORTED
+                    message: "This version of the API supports tax years up to, and\
+                      \ including, 2025-26. For tax years 2026–27 onwards, a new version\
+                      \ is in development"
                 RULE_TAX_YEAR_RANGE_INVALID:
                   description: |
                     Tax year range invalid. A tax year range of one year is required.
@@ -1335,10 +1367,11 @@ paths:
         \ provided.\nThe user should be aware that where a loss has been used as part\
         \ of a successful final declaration activity, deletion will be blocked and\
         \ an error code will be returned. In such a case, the user can amend the loss\
-        \ amount to zero.\n\n### Test data\nScenario simulation using Gov-Test-Scenario\
-        \ headers is only available in the sandbox environment.    \n\n| Header Value\
-        \ (Gov-Test-Scenario)       | Scenario                                   \
-        \    |\n|----------------------------------------|------------------------------------------------|\n\
+        \ amount to zero.\n\n> <strong>This endpoint supports tax years up to, and\
+        \ including, 2025-26. For tax years 2026–27 onwards, a new version is in development.</strong>\n\
+        \n### Test data\nScenario simulation using Gov-Test-Scenario headers is only\
+        \ available in the sandbox environment.    \n\n| Header Value (Gov-Test-Scenario)\
+        \       | Scenario                                       |\n|----------------------------------------|------------------------------------------------|\n\
         | N/A - DEFAULT                          | Simulates success response.   \
         \                 |\n| DELETE_AFTER_FINAL_DECLARATION         | Simulates\
         \ the error scenario where the user has already submitted a final declaration\
@@ -1468,6 +1501,15 @@ paths:
                     code: RULE_TAX_YEAR_NOT_SUPPORTED
                     message: The tax year specified does not lie within the supported
                       range
+                RULE_TAX_YEAR_FOR_VERSION_NOT_SUPPORTED:
+                  description: "This version of the API supports tax years up to,\
+                    \ and including, 2025-26. For tax years 2026–27 onwards, a new\
+                    \ version is in development."
+                  value:
+                    code: RULE_TAX_YEAR_FOR_VERSION_NOT_SUPPORTED
+                    message: "This version of the API supports tax years up to, and\
+                      \ including, 2025-26. For tax years 2026–27 onwards, a new version\
+                      \ is in development"
                 RULE_DELETE_AFTER_FINAL_DECLARATION:
                   description: |
                     The remote endpoint has indicated that the requested resource has been locked.
@@ -1564,6 +1606,8 @@ paths:
       description: |
         This endpoint enables you to create a loss claim against an income source for a specific tax year. <Strong>Claims cannot be made until after the end of the accounting period.</Strong>
         A National Insurance number must be provided.
+
+        > <strong>This endpoint supports tax years up to, and including, 2025-26. For tax years 2026–27 onwards, a new version is in development.</strong>
 
         <strong>
           Note: carry-sideways-fhl type of loss claims for income sources uk-property-fhl and foreign-property-fhl-eea will not be supported from tax year 2025-26 onwards.
@@ -1759,6 +1803,15 @@ paths:
                     code: RULE_TAX_YEAR_NOT_SUPPORTED
                     message: The tax year specified does not lie within the supported
                       range
+                RULE_TAX_YEAR_FOR_VERSION_NOT_SUPPORTED:
+                  description: "This version of the API supports tax years up to,\
+                    \ and including, 2025-26. For tax years 2026–27 onwards, a new\
+                    \ version is in development."
+                  value:
+                    code: RULE_TAX_YEAR_FOR_VERSION_NOT_SUPPORTED
+                    message: "This version of the API supports tax years up to, and\
+                      \ including, 2025-26. For tax years 2026–27 onwards, a new version\
+                      \ is in development"
                 RULE_TAX_YEAR_RANGE_INVALID:
                   description: |
                     Tax year range invalid. A tax year range of one year is required.
@@ -1911,6 +1964,8 @@ paths:
       description: |
         This endpoint enables you to retrieve the existing loss claims information.
         A National Insurance Number and tax year must be provided.
+
+        > <strong>This endpoint supports tax years up to, and including, 2025-26. For tax years 2026–27 onwards, a new version is in development.</strong>
 
         <strong>
           Note: carry-sideways-fhl type of loss claims for income sources uk-property-fhl and foreign-property-fhl-eea will not be supported from tax year 2025-26 onwards.
@@ -2142,6 +2197,15 @@ paths:
                     code: RULE_TAX_YEAR_NOT_SUPPORTED
                     message: The tax year specified does not lie within the supported
                       range
+                RULE_TAX_YEAR_FOR_VERSION_NOT_SUPPORTED:
+                  description: "This version of the API supports tax years up to,\
+                    \ and including, 2025-26. For tax years 2026–27 onwards, a new\
+                    \ version is in development."
+                  value:
+                    code: RULE_TAX_YEAR_FOR_VERSION_NOT_SUPPORTED
+                    message: "This version of the API supports tax years up to, and\
+                      \ including, 2025-26. For tax years 2026–27 onwards, a new version\
+                      \ is in development"
                 RULE_TAX_YEAR_RANGE_INVALID:
                   description: |
                     Tax year range invalid. A tax year range of one year is required.
@@ -2510,6 +2574,8 @@ paths:
         This endpoint allows a developer to delete an existing Loss Claim.
         A National Insurance number, tax year and Claim ID must be provided.
 
+        > <strong>This endpoint supports tax years up to, and including, 2025-26. For tax years 2026–27 onwards, a new version is in development.</strong>
+
         ### Test data
         Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
 
@@ -2629,6 +2695,15 @@ paths:
                     code: RULE_TAX_YEAR_NOT_SUPPORTED
                     message: The tax year specified does not lie within the supported
                       range
+                RULE_TAX_YEAR_FOR_VERSION_NOT_SUPPORTED:
+                  description: "This version of the API supports tax years up to,\
+                    \ and including, 2025-26. For tax years 2026–27 onwards, a new\
+                    \ version is in development."
+                  value:
+                    code: RULE_TAX_YEAR_FOR_VERSION_NOT_SUPPORTED
+                    message: "This version of the API supports tax years up to, and\
+                      \ including, 2025-26. For tax years 2026–27 onwards, a new version\
+                      \ is in development"
                 RULE_TAX_YEAR_RANGE_INVALID:
                   description: |
                     Tax year range invalid. A tax year range of one year is required.
@@ -2730,14 +2805,16 @@ paths:
       summary: Amend a Loss Claim Type
       description: "This endpoint enables you to change the type of claim for an existing\
         \ loss claim type.\nA National Insurance Number, tax year and Claim ID must\
-        \ be provided.\n\n<strong>\n  Note: carry-sideways-fhl type of loss claims\
-        \ for income sources uk-property-fhl and foreign-property-fhl-eea will not\
-        \ be supported from tax year 2025-26 onwards.\n</strong>\n\n### Test data\n\
-        Scenario simulation using Gov-Test-Scenario headers is only available in the\
-        \ sandbox environment.\n\n| Header Value (Gov-Test-Scenario) | Scenario  \
+        \ be provided.\n\n> <strong>This endpoint supports tax years up to, and including,\
+        \ 2025-26. For tax years 2026–27 onwards, a new version is in development.</strong>\n\
+        \n<strong>\n  Note: carry-sideways-fhl type of loss claims for income sources\
+        \ uk-property-fhl and foreign-property-fhl-eea will not be supported from\
+        \ tax year 2025-26 onwards.\n</strong>\n\n### Test data\nScenario simulation\
+        \ using Gov-Test-Scenario headers is only available in the sandbox environment.\n\
+        \n| Header Value (Gov-Test-Scenario) | Scenario                          \
         \                                                                        \
-        \                                                                     |\n\
-        | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------\
+        \                                             |\n| --------------------------------\
+        \ | ------------------------------------------------------------------------------------------------------------------------------------------------------\
         \ |\n| N/A - DEFAULT                    | Simulates success response.    \
         \                                                                        \
         \                                                |\n| FP_FORWARD         \
@@ -3038,6 +3115,15 @@ paths:
                     code: RULE_TAX_YEAR_NOT_SUPPORTED
                     message: The tax year specified does not lie within the supported
                       range
+                RULE_TAX_YEAR_FOR_VERSION_NOT_SUPPORTED:
+                  description: "This version of the API supports tax years up to,\
+                    \ and including, 2025-26. For tax years 2026–27 onwards, a new\
+                    \ version is in development."
+                  value:
+                    code: RULE_TAX_YEAR_FOR_VERSION_NOT_SUPPORTED
+                    message: "This version of the API supports tax years up to, and\
+                      \ including, 2025-26. For tax years 2026–27 onwards, a new version\
+                      \ is in development"
                 RULE_TAX_YEAR_RANGE_INVALID:
                   description: |
                     Tax year range invalid. A tax year range of one year is required.
@@ -3727,6 +3813,13 @@ components:
       value:
         code: RULE_TAX_YEAR_NOT_SUPPORTED
         message: The tax year specified does not lie within the supported range
+    ruleTaxYearForVersionNotSupported:
+      description: "This version of the API supports tax years up to, and including,\
+        \ 2025-26. For tax years 2026–27 onwards, a new version is in development."
+      value:
+        code: RULE_TAX_YEAR_FOR_VERSION_NOT_SUPPORTED
+        message: "This version of the API supports tax years up to, and including,\
+          \ 2025-26. For tax years 2026–27 onwards, a new version is in development"
     formatValue:
       description: |
         One or more values have been added with the incorrect format.
