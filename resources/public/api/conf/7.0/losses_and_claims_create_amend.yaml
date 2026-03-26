@@ -34,11 +34,9 @@ requestBody:
         $ref: './schemas/lossesAndClaims/createAmend/request.json'
       examples:
         Losses and Claims:
-          value:
-            $ref: './examples/lossesAndClaims/createAmend/default_request.json'
+          externalValue: './examples/lossesAndClaims/createAmend/default_request.json'
         Terminal Loss Claim:
-          value:
-            $ref: './examples/lossesAndClaims/createAmend/terminal_loss_claim_request.json'
+          externalValue: './examples/lossesAndClaims/createAmend/terminal_loss_claim_request.json'
 
 responses:
   "204":
