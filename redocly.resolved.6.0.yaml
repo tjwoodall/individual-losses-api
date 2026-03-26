@@ -172,24 +172,15 @@ paths:
               example-1:
                 description: Self-Employment Request
                 value:
-                  taxYearBroughtForwardFrom: 2020-21
-                  businessId: XBIS12345678910
-                  typeOfLoss: self-employment
-                  lossAmount: 5001.99
+                  $ref: ./examples/broughtForwardLosses/createBFLoss/create_request_self_employment.json
               example-2:
                 description: UK Property Request
                 value:
-                  taxYearBroughtForwardFrom: 2020-21
-                  businessId: XPIS12345678910
-                  typeOfLoss: uk-property-fhl
-                  lossAmount: 500.99
+                  $ref: ./examples/broughtForwardLosses/createBFLoss/create_request_uk_property_fhl.json
               example-3:
                 description: Foreign Property Request
                 value:
-                  taxYearBroughtForwardFrom: 2020-21
-                  businessId: XFIS12345678910
-                  typeOfLoss: foreign-property
-                  lossAmount: 5000.99
+                  $ref: ./examples/broughtForwardLosses/createBFLoss/create_request_foreign_property.json
       responses:
         '201':
           description: Success
@@ -224,7 +215,7 @@ paths:
                 example-1:
                   description: Example Response
                   value:
-                    lossId: AAZZ1234567890a
+                    $ref: ./examples/broughtForwardLosses/createBFLoss/create_response.json
         '400':
           description: Bad request
           headers:
@@ -493,7 +484,7 @@ paths:
               example-1:
                 description: Default Example
                 value:
-                  lossAmount: 3456.78
+                  $ref: ./examples/broughtForwardLosses/amendBFLoss/amend_request.json
       responses:
         '200':
           description: Success
@@ -557,19 +548,11 @@ paths:
                 example-1:
                   description: Self-Employment Class 4 Loss
                   value:
-                    businessId: XBIS12345678910
-                    typeOfLoss: self-employment-class4
-                    lossAmount: 3456.78
-                    taxYearBroughtForwardFrom: 2021-22
-                    lastModified: '2022-07-13T12:13:48.763Z'
+                    $ref: ./examples/broughtForwardLosses/amendBFLoss/amend_se_class4_response.json
                 example-2:
                   description: UK Property (Non-FHL) Loss
                   value:
-                    businessId: XPIS12345678910
-                    typeOfLoss: uk-property
-                    lossAmount: 3456.78
-                    taxYearBroughtForwardFrom: 2021-22
-                    lastModified: '2022-07-13T12:13:48.763Z'
+                    $ref: ./examples/broughtForwardLosses/amendBFLoss/amend_uk_property_response.json
         '400':
           description: Bad request
           headers:
@@ -855,43 +838,7 @@ paths:
                 example-1:
                   description: Example Response
                   value:
-                    losses:
-                      - lossId: A2Za0911235813a
-                        businessId: XBIS12345678901
-                        typeOfLoss: self-employment
-                        lossAmount: 9420.01
-                        taxYearBroughtForwardFrom: 2021-22
-                        lastModified: '2022-12-02T11:55:55.763Z'
-                      - lossId: A2Za0911235813b
-                        businessId: XBIS12345678902
-                        typeOfLoss: self-employment-class4
-                        lossAmount: 3298.5
-                        taxYearBroughtForwardFrom: 2021-22
-                        lastModified: '2022-12-03T11:55:55.763Z'
-                      - lossId: A2Za0911235813c
-                        businessId: XPIS12345678903
-                        typeOfLoss: uk-property-fhl
-                        lossAmount: 1882.99
-                        taxYearBroughtForwardFrom: 2021-22
-                        lastModified: '2022-12-04T11:55:55.763Z'
-                      - lossId: A2Za0911235813d
-                        businessId: XPIS12345678904
-                        typeOfLoss: uk-property
-                        lossAmount: 4882.99
-                        taxYearBroughtForwardFrom: 2021-22
-                        lastModified: '2022-12-05T11:55:55.763Z'
-                      - lossId: A2Za0911235813e
-                        businessId: XFIS12345678905
-                        typeOfLoss: foreign-property-fhl-eea
-                        lossAmount: 2985.99
-                        taxYearBroughtForwardFrom: 2021-22
-                        lastModified: '2022-12-06T11:55:55.763Z'
-                      - lossId: A2Za0911235813f
-                        businessId: XFIS12345678906
-                        typeOfLoss: foreign-property
-                        lossAmount: 3553.99
-                        taxYearBroughtForwardFrom: 2021-22
-                        lastModified: '2022-12-07T11:55:55.763Z'
+                    $ref: ./examples/broughtForwardLosses/listBFLoss/list_response.json
         '400':
           description: Bad request
           headers:
@@ -1113,27 +1060,15 @@ paths:
                 example-1:
                   description: Self-Employment Loss
                   value:
-                    businessId: XBIS12345678911
-                    typeOfLoss: self-employment
-                    lossAmount: 300.11
-                    taxYearBroughtForwardFrom: 2021-22
-                    lastModified: '2022-11-05T11:56:27Z'
+                    $ref: ./examples/broughtForwardLosses/retrieveBFLoss/retrieve_se_response.json
                 example-2:
                   description: UK FHL Property Loss
                   value:
-                    businessId: XPIS12345678912
-                    typeOfLoss: uk-property-fhl
-                    lossAmount: 423.32
-                    taxYearBroughtForwardFrom: 2021-22
-                    lastModified: '2022-12-02T12:56:58Z'
+                    $ref: ./examples/broughtForwardLosses/retrieveBFLoss/retrieve_uk_property_fhl_response.json
                 example-3:
                   description: Foreign Property Loss
                   value:
-                    businessId: XFIS12345678913
-                    typeOfLoss: foreign-property
-                    lossAmount: 553.32
-                    taxYearBroughtForwardFrom: 2021-22
-                    lastModified: '2022-12-02T11:55:55Z'
+                    $ref: ./examples/broughtForwardLosses/retrieveBFLoss/retrieve_foreign_property_response.json
         '400':
           description: Bad request
           headers:
@@ -1494,24 +1429,15 @@ paths:
               example-1:
                 description: Self-Employment Claim Request
                 value:
-                  businessId: XBIS12356589871
-                  typeOfLoss: self-employment
-                  typeOfClaim: carry-forward
-                  taxYearClaimedFor: 2019-20
+                  $ref: ./examples/lossClaims/createLossClaim/def1/request/self_employment_claims.json
               example-2:
                 description: UK Property Claim Request
                 value:
-                  businessId: XPIS12356589871
-                  typeOfLoss: uk-property
-                  typeOfClaim: carry-sideways
-                  taxYearClaimedFor: 2019-20
+                  $ref: ./examples/lossClaims/createLossClaim/def1/request/uk_property_claims.json
               example-3:
                 description: Foreign Property Claim Request
                 value:
-                  businessId: XFIS12356589871
-                  typeOfLoss: foreign-property
-                  typeOfClaim: carry-sideways
-                  taxYearClaimedFor: 2019-20
+                  $ref: ./examples/lossClaims/createLossClaim/def1/request/foreign_property_claims.json
       responses:
         '201':
           description: Success
@@ -1544,7 +1470,7 @@ paths:
                 example-1:
                   description: Given any tax year
                   value:
-                    claimId: AAZZ1234567890A
+                    $ref: ./examples/lossClaims/createLossClaim/def1/response.json
         '400':
           description: Bad request
           headers:
@@ -1855,36 +1781,15 @@ paths:
                 example-1:
                   description: Self-Employment Loss Claim
                   value:
-                    claims:
-                      - businessId: XBIS12356589871
-                        typeOfLoss: self-employment
-                        typeOfClaim: carry-sideways
-                        taxYearClaimedFor: 2019-20
-                        claimId: AAZZ0123456789a
-                        sequence: 1
-                        lastModified: '2020-07-13T12:13:48.763Z'
+                    $ref: ./examples/lossClaims/listLossClaims/def1/response/self_employment_claims.json
                 example-2:
                   description: UK Property Loss Claim
                   value:
-                    claims:
-                      - businessId: XPIS12356589871
-                        typeOfLoss: uk-property
-                        typeOfClaim: carry-sideways
-                        taxYearClaimedFor: 2019-20
-                        claimId: AAZZ0123456789a
-                        sequence: 1
-                        lastModified: '2020-07-13T12:13:48.763Z'
+                    $ref: ./examples/lossClaims/listLossClaims/def1/response/uk_property_claims.json
                 example-3:
                   description: Foreign Property Loss Claim
                   value:
-                    claims:
-                      - businessId: XFIS12356589871
-                        typeOfLoss: foreign-property
-                        typeOfClaim: carry-sideways
-                        taxYearClaimedFor: 2019-20
-                        claimId: AAZZ0123456789a
-                        sequence: 1
-                        lastModified: '2020-07-13T12:13:48.763Z'
+                    $ref: ./examples/lossClaims/listLossClaims/def1/response/foreign_property_claims.json
         '400':
           description: Bad request
           headers:
@@ -2108,30 +2013,15 @@ paths:
                 example-1:
                   description: Self-Employment Loss Claim
                   value:
-                    taxYearClaimedFor: 2021-22
-                    typeOfLoss: self-employment
-                    typeOfClaim: carry-sideways
-                    businessId: XBIS12356589871
-                    sequence: 1
-                    lastModified: '2022-07-13T12:13:48.763Z'
+                    $ref: ./examples/lossClaims/retrieveLossClaim/def1/response/self_employment_claims.json
                 example-2:
                   description: UK Property Loss Claim
                   value:
-                    taxYearClaimedFor: 2021-22
-                    typeOfLoss: uk-property
-                    typeOfClaim: carry-sideways
-                    businessId: XPIS12356589871
-                    sequence: 1
-                    lastModified: '2022-07-13T12:13:48.763Z'
+                    $ref: ./examples/lossClaims/retrieveLossClaim/def1/response/uk_property_claims.json
                 example-3:
                   description: Foreign Property Loss Claim
                   value:
-                    taxYearClaimedFor: 2021-22
-                    typeOfLoss: foreign-property
-                    typeOfClaim: carry-sideways
-                    businessId: XFIS12356589871
-                    sequence: 1
-                    lastModified: '2022-07-13T12:13:48.763Z'
+                    $ref: ./examples/lossClaims/retrieveLossClaim/def1/response/foreign_property_claims.json
         '400':
           description: Bad request
           headers:
@@ -2484,7 +2374,7 @@ paths:
               example-1:
                 description: Given any tax year
                 value:
-                  typeOfClaim: carry-forward
+                  $ref: ./examples/lossClaims/amendLossClaimType/def1/request.json
       responses:
         '200':
           description: Success
@@ -2547,12 +2437,7 @@ paths:
                 example-1:
                   description: Given any tax year
                   value:
-                    typeOfLoss: self-employment
-                    businessId: X2IS12356589871
-                    typeOfClaim: carry-forward
-                    taxYearClaimedFor: 2019-20
-                    sequence: 2
-                    lastModified: '2020-07-13T12:13:48.763Z'
+                    $ref: ./examples/lossClaims/amendLossClaimType/def1/response.json
         '400':
           description: Bad request
           headers:
@@ -2778,14 +2663,7 @@ paths:
               example-1:
                 description: Given any tax year
                 value:
-                  typeOfClaim: carry-sideways
-                  listOfLossClaims:
-                    - claimId: 1234567890ABCDE
-                      sequence: 2
-                    - claimId: 1234567890ABDE0
-                      sequence: 3
-                    - claimId: 1234567890ABEF1
-                      sequence: 1
+                  $ref: ./examples/lossClaims/amendLossClaimsOrder/def1/request.json
       responses:
         '200':
           description: Success
