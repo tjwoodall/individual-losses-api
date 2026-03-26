@@ -1,0 +1,1110 @@
+openapi: 3.0.3
+info:
+  version: '7.0'
+  title: Individual Losses (MTD) [test only]
+  description: |
+    The following endpoints are stateful in the Sandbox:
+      * Retrieve Losses and Claims    
+      * Create or Amend Losses and Claims
+      * Delete Losses and Claims
+
+    # Send fraud prevention data
+    HMRC monitors transactions to help protect your customers' confidential data from criminals and fraudsters. 
+
+    <div class="govuk-warning-text warning-icon-fix">
+      <span class="govuk-warning-text__icon warning-icon-ui-fix" aria-hidden="true">!</span>
+      <strong class="govuk-warning-text__text">
+        <span class="govuk-warning-text__assistive">Warning</span>
+        You are required by law to submit header data for this API. This includes all associated APIs and endpoints.
+      </strong>
+    </div>
+
+    [Check the data you need to send](/guides/fraud-prevention/). You can also use the [Test API](/api-documentation/docs/api/service/txm-fph-validator-api/1.0) during initial development and as part of your quality assurance checks.
+
+    # Mapping APIs to Self Assessment tax return forms
+    Some parameters in this API map to box numbers in one or more Self Assessment tax return forms. To learn more and to download this mapping information as a CSV file, go to [income-tax-mtd-changelog/mapping](https://github.com/hmrc/income-tax-mtd-changelog?tab=readme-ov-file#mapping-apis-to-self-assessment-tax-return-forms) on GitHub.
+
+    # Changelog
+    You can find the changelog in the [income-tax-mtd-changelog](https://github.com/hmrc/income-tax-mtd-changelog/#readme) on GitHub.
+
+    # Support
+
+    * Direct reports of bugs or errors in Production or Sandbox code, or queries about HMRC business functionality (such as how a specific field is used by HMRC or why it is needed) to the [Software Development Support Team (SDST)](https://developer.service.hmrc.gov.uk/developer/support).
+    * Send queries or feedback related to the design of the APIs (including recommended changes) using the [income-tax-mtd-changelog](https://github.com/hmrc/income-tax-mtd-changelog/issues) GitHub page.
+    * <a href="/contact/report-technical-problem?newTab=true&service=api-documentation-frontend" target="_blank">Is this page not working properly? (opens in new tab)</a>
+servers:
+  - url: https://test-api.service.hmrc.gov.uk
+    description: Sandbox
+  - url: https://api.service.hmrc.gov.uk
+    description: Production
+paths:
+  /individuals/losses/{nino}/businesses/{businessId}/loss-claims/{taxYear}:
+    get:
+      security:
+        - User-Restricted:
+            - read:self-assessment
+      summary: Retrieve Losses and Claims [test only]
+      description: |
+        This endpoint allows a developer to retrieve a claim or a brought-forward-loss for a specified individual and business for a given tax year.
+        A National Insurance number, business ID and tax year are required.
+
+        ### Test data
+        Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+        | Header Value (Gov-Test-Scenario) | Scenario                                                       |
+        | -------------------------------- | -------------------------------------------------------------- |
+        | N/A - DEFAULT                    | Simulates successful response with losses and claims.          |
+        | TERMINAL_LOSS_CLAIM              | Simulates success response with terminal loss claim.           |
+        | NOT_FOUND                        | Simulates the scenario where no data is found.                 |
+        | STATEFUL                         | Performs a stateful retrieve.                                  |
+      parameters:
+        - name: nino
+          in: path
+          description: |
+            National Insurance number, in the format `AA999999A`.
+          schema: &ref_6
+            type: string
+            example: TC663795B
+          required: true
+        - name: businessId
+          in: path
+          description: |
+            An identifier for the business, unique to the customer.
+          schema: &ref_7
+            type: string
+            example: XAIS12345678910
+            pattern: ^X[A-Z0-9]{1}IS[0-9]{11}$
+          required: true
+        - name: taxYear
+          in: path
+          description: |
+            The tax year to which the data applies. The start year and end year must not span two tax years. The minimum tax year is 2026-27. No gaps are allowed, for example, 2026-28 is not valid.
+          schema: &ref_8
+            type: string
+            example: 2026-27
+          required: true
+        - name: Accept
+          in: header
+          description: |
+            Specifies the response format and the version of the API to be used.
+          schema: &ref_9
+            type: string
+            enum:
+              - application/vnd.hmrc.7.0+json
+          required: true
+        - name: Authorization
+          in: header
+          description: |
+            An OAuth 2.0 Bearer Token with the *read:self-assessment* scope.
+          schema:
+            type: string
+            example: Bearer bb7fed3fe10dd235a2ccda3d50fb
+          required: true
+        - name: Gov-Test-Scenario
+          in: header
+          description: |
+            Only in sandbox environment. See Test Data table for all header values.
+          schema: &ref_10
+            type: string
+            example: '-'
+          required: false
+      responses:
+        '200':
+          description: Success
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: &ref_0
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: &ref_1
+                type: string
+                example: Sun, 01 Jan 2023 23:59:59 GMT
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: &ref_2
+                type: string
+                example: Sun, 02 Jul 2023 23:59:59 GMT
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                URL of the documentation for the API.
+              schema: &ref_3
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/individual-losses-api
+              required: false
+          content:
+            application/json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                type: object
+                properties:
+                  submittedOn:
+                    type: string
+                    description: The date and time of the submission, in the format YYYY-MM-DDThh:mm:ss.SSSZ
+                    format: date-time
+                    example: '2026-08-24T14:15:22.544Z'
+                  claims:
+                    type: object
+                    description: Object containing claim details.
+                    properties:
+                      carryBack:
+                        type: object
+                        description: Object containing loss amounts to be carried back.
+                        properties:
+                          previousYearGeneralIncome:
+                            type: number
+                            description: The amount of the current tax year's trading losses to carry back under Section 64 to be off set against general income of the previous year(s). The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                            example: 5000.99
+                            multipleOf: 0.01
+                            minimum: 0
+                            maximum: 99999999999.99
+                          earlyYearLosses:
+                            type: number
+                            description: The amount of the current tax year's trading losses to carry back under Section 72 to be set off against general income of the previous year(s). The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                            example: 5000.99
+                            multipleOf: 0.01
+                            minimum: 0
+                            maximum: 99999999999.99
+                          terminalLosses:
+                            type: number
+                            description: The amount of the current tax year's trading losses to be carry back under Section 89 and applied against profits of the three previous years, starting with the earliest year first. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                            example: 5000.99
+                            multipleOf: 0.01
+                            minimum: 0
+                            maximum: 99999999999.99
+                      carrySideways:
+                        type: object
+                        description: Object containing loss amounts to be carried sideways to the current tax year general income.
+                        properties:
+                          currentYearGeneralIncome:
+                            type: number
+                            description: The amount of the current tax year's trading losses to be off set general income of the current tax year under Section 64. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                            example: 5000.99
+                            multipleOf: 0.01
+                            minimum: 0
+                            maximum: 99999999999.99
+                      preferenceOrder:
+                        type: object
+                        description: Object containing a preference order to be specified.
+                        properties:
+                          applyFirst:
+                            type: string
+                            enum:
+                              - carry-sideways
+                              - carry-back
+                            description: |-
+                              Specifies the preference order when the current tax year's trading losses have been claimed under Section 64 to set against general income of a previous year and set against general income of the current tax year.
+
+                              Limited to the following possible values:
+                              * carry-sideways 
+                              * carry-back
+                      carryForward:
+                        type: object
+                        description: Object containing loss amounts to be carried forward.
+                        properties:
+                          currentYearLosses:
+                            type: number
+                            description: The amount of trading losses in the current tax year carried forward to offset future profits of the same trade under Section 83. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                            example: 5000.99
+                            multipleOf: 0.01
+                            minimum: 0
+                            maximum: 99999999999.99
+                          previousYearsLosses:
+                            type: number
+                            description: The amount of trading losses from previous years carried forward to offset future profits of the same trade under Section 83. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                            example: 5000.99
+                            multipleOf: 0.01
+                            minimum: 0
+                            maximum: 99999999999.99
+                    additionalProperties: false
+                  losses:
+                    type: object
+                    description: Object containing brought forward loss amount.
+                    properties:
+                      broughtForwardLosses:
+                        type: number
+                        description: The amount of brought forward losses to be applied in the current tax year against any the current tax year profits. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                        example: 5000.99
+                        multipleOf: 0.01
+                        minimum: 0
+                        maximum: 99999999999.99
+                    additionalProperties: false
+                required:
+                  - submittedOn
+                additionalProperties: false
+              examples:
+                Losses and Claims:
+                  value:
+                    $ref: ./examples/lossesAndClaims/retrieve/retrieve_losses_and_claims.json
+                Terminal Loss Claim:
+                  value:
+                    $ref: ./examples/lossesAndClaims/retrieve/retrieve_terminal_loss_claim.json
+        '400':
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                URL of the documentation for the API.
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: &ref_4
+                  code:
+                    description: The error code
+                    type: string
+                  message:
+                    description: The error message
+                    type: string
+                required: &ref_5
+                  - code
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value: &ref_11
+                    code: FORMAT_NINO
+                    message: The provided NINO is invalid
+                FORMAT_TAX_YEAR:
+                  description: |
+                    The format of the supplied taxYear value is not valid.
+                  value: &ref_13
+                    code: FORMAT_TAX_YEAR
+                    message: The provided tax year is invalid
+                FORMAT_BUSINESS_ID:
+                  description: |
+                    The format of the supplied Business ID field is not valid.
+                  value: &ref_12
+                    code: FORMAT_BUSINESS_ID
+                    message: The provided Business ID is invalid
+                RULE_TAX_YEAR_RANGE_INVALID:
+                  description: |
+                    Tax year range invalid. A tax year range of one year is required.
+                  value: &ref_15
+                    code: RULE_TAX_YEAR_RANGE_INVALID
+                    message: A tax year range of one year is required
+                RULE_TAX_YEAR_NOT_SUPPORTED:
+                  description: |
+                    The specified tax year is not supported. The tax year specified is before the minimum tax year value.
+                  value: &ref_14
+                    code: RULE_TAX_YEAR_NOT_SUPPORTED
+                    message: The tax year specified does not lie within the supported range
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: |
+                    The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for 
+                    this endpoint version. This error will only be returned in the Sandbox environment.
+                  value: &ref_16
+                    code: RULE_INCORRECT_GOV_TEST_SCENARIO
+                    message: The supplied Gov-Test-Scenario is not valid
+        '403':
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                URL of the documentation for the API.
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client or agent is not authorised. This is because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value: &ref_17
+                    code: CLIENT_OR_AGENT_NOT_AUTHORISED
+                    message: The client or agent is not authorised
+        '404':
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                URL of the documentation for the API.
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                MATCHING_RESOURCE_NOT_FOUND:
+                  description: |
+                    The supplied income source could not be found.
+                  value: &ref_18
+                    code: MATCHING_RESOURCE_NOT_FOUND
+                    message: Matching resource not found
+    put:
+      security:
+        - User-Restricted:
+            - write:self-assessment
+      summary: Create or Amend Losses and Claims [test only]
+      description: |
+        This endpoint allows a developer to submit or amend a claim or a brought-forward-loss for a specified individual and business for a given tax year.  A National Insurance number, business ID and tax year are required.
+
+        ### Test data
+        Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+        | Header Value (Gov-Test-Scenario) | Scenario                                                                                         |
+        |----------------------------------|--------------------------------------------------------------------------------------------------|
+        | N/A - DEFAULT                    | Simulates successful response.                                                                   |
+        | NOT_FOUND                        | Simulates the scenario where no data is found.                                                   |
+        | CARRY_BACK_CLAIM                 | Simulates the scenario where carry back claim type is supplied for a property income source.     |
+        | OUTSIDE_AMENDMENT_WINDOW         | Simulates the scenario where request cannot be completed as it is outside the amendment window.  |
+        | STATEFUL                         | Performs a stateful create or update.                                                            |
+      parameters:
+        - name: nino
+          in: path
+          description: |
+            National Insurance number, in the format `AA999999A`.
+          schema: *ref_6
+          required: true
+        - name: businessId
+          in: path
+          description: |
+            An identifier for the business, unique to the customer.
+          schema: *ref_7
+          required: true
+        - name: taxYear
+          in: path
+          description: |
+            The tax year to which the data applies. The start year and end year must not span two tax years. The minimum tax year is 2026-27. No gaps are allowed, for example, 2026-28 is not valid.
+          schema: *ref_8
+          required: true
+        - name: Accept
+          in: header
+          description: |
+            Specifies the response format and the version of the API to be used.
+          schema: *ref_9
+          required: true
+        - name: Content-Type
+          in: header
+          description: |
+            Specifies the format of the request body, which must be JSON.
+          schema:
+            type: string
+            enum:
+              - application/json
+          required: true
+        - name: Authorization
+          in: header
+          description: |
+            An OAuth 2.0 Bearer Token with the *write:self-assessment* scope.
+          schema: &ref_19
+            type: string
+            example: Bearer bb7fed3fe10dd235a2ccda3d50fb
+          required: true
+        - name: Gov-Test-Scenario
+          in: header
+          description: |
+            Only in sandbox environment. See Test Data table for all header values.
+          schema: *ref_10
+          required: false
+        - name: suspend-temporal-validations
+          in: header
+          description: |
+            Only in the sandbox environment. When supplied and set to `true`, this header relaxes tax year validation rule to 
+            allow in-year submissions for endpoints configured for end-of-year submissions. Not supplying the header or setting 
+            it to `false` results in a `RULE_TAX_YEAR_NOT_ENDED` error for in-year submissions. In Production, the header is
+            ignored and normal validations apply.
+          schema:
+            type: boolean
+            example: true
+          required: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $schema: http://json-schema.org/draft-04/schema#
+              type: object
+              properties:
+                claims:
+                  type: object
+                  description: Object containing claim details.
+                  properties:
+                    carryBack:
+                      type: object
+                      description: Object containing loss amounts to be carried back.
+                      properties:
+                        previousYearGeneralIncome:
+                          type: number
+                          description: The amount of the current tax year's trading losses to carry back under Section 64 to be off set against general income of the previous year(s). The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          example: 5000.99
+                          multipleOf: 0.01
+                          minimum: 0
+                          maximum: 99999999999.99
+                        earlyYearLosses:
+                          type: number
+                          description: The amount of the current tax year's trading losses to carry back under Section 72 to be set off against general income of the previous year(s). The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          example: 5000.99
+                          multipleOf: 0.01
+                          minimum: 0
+                          maximum: 99999999999.99
+                        terminalLosses:
+                          type: number
+                          description: The amount of the current tax year's trading losses to be carry back under Section 89 and applied against profits of the three previous years, starting with the earliest year first. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          example: 5000.99
+                          multipleOf: 0.01
+                          minimum: 0
+                          maximum: 99999999999.99
+                    carrySideways:
+                      type: object
+                      description: Object containing loss amounts to be carried sideways to the current tax year general income.
+                      properties:
+                        currentYearGeneralIncome:
+                          type: number
+                          description: The amount of the current tax year's trading losses to be off set general income of the current tax year under Section 64. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          example: 5000.99
+                          multipleOf: 0.01
+                          minimum: 0
+                          maximum: 99999999999.99
+                    preferenceOrder:
+                      type: object
+                      description: Object containing a preference order to be specified.
+                      properties:
+                        applyFirst:
+                          type: string
+                          enum:
+                            - carry-sideways
+                            - carry-back
+                          description: |-
+                            Specifies the preference order when the current tax year's trading losses have been claimed under Section 64 to set against general income of a previous year and set against general income of the current tax year.
+
+                            Limited to the following possible values:
+                            * carry-sideways 
+                            * carry-back
+                    carryForward:
+                      type: object
+                      description: Object containing loss amounts to be carried forward.
+                      properties:
+                        currentYearLosses:
+                          type: number
+                          description: The amount of trading losses in the current tax year carried forward to offset future profits of the same trade under Section 83. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          example: 5000.99
+                          multipleOf: 0.01
+                          minimum: 0
+                          maximum: 99999999999.99
+                        previousYearsLosses:
+                          type: number
+                          description: The amount of trading losses from previous years carried forward to offset future profits of the same trade under Section 83. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          example: 5000.99
+                          multipleOf: 0.01
+                          minimum: 0
+                          maximum: 99999999999.99
+                  additionalProperties: false
+                losses:
+                  type: object
+                  description: Object containing brought forward loss amount.
+                  properties:
+                    broughtForwardLosses:
+                      type: number
+                      description: The amount of brought forward losses to be applied in the current tax year against any the current tax year profits. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                      example: 5000.99
+                      multipleOf: 0.01
+                      minimum: 0
+                      maximum: 99999999999.99
+                  additionalProperties: false
+              additionalProperties: false
+            examples:
+              Losses and Claims:
+                value:
+                  $ref: ./examples/lossesAndClaims/createAmend/default_request.json
+              Terminal Loss Claim:
+                value:
+                  $ref: ./examples/lossesAndClaims/createAmend/terminal_loss_claim_request.json
+      responses:
+        '204':
+          description: Success (No Content)
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                URL of the documentation for the API.
+              schema: *ref_3
+              required: false
+        '400':
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                URL of the documentation for the API.
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value: *ref_11
+                FORMAT_BUSINESS_ID:
+                  description: |
+                    The format of the supplied Business ID field is not valid.
+                  value: *ref_12
+                FORMAT_TAX_YEAR:
+                  description: |
+                    The format of the supplied taxYear value is not valid.
+                  value: *ref_13
+                RULE_TAX_YEAR_NOT_SUPPORTED:
+                  description: |
+                    The specified tax year is not supported. The tax year specified is before the minimum tax year value.
+                  value: *ref_14
+                RULE_TAX_YEAR_RANGE_INVALID:
+                  description: |
+                    Tax year range invalid. A tax year range of one year is required.
+                  value: *ref_15
+                RULE_TAX_YEAR_NOT_ENDED:
+                  description: |
+                    The submission has been made before the taxYear it relates to has ended.
+                  value:
+                    code: RULE_TAX_YEAR_NOT_ENDED
+                    message: The specified tax year has not yet ended
+                FORMAT_VALUE:
+                  description: |
+                    One or more values have been added with the incorrect format.
+                  value:
+                    code: FORMAT_VALUE
+                    message: The value must be between 0 and 99999999999.99
+                FORMAT_PREFERENCE_ORDER:
+                  description: |
+                    The format of the supplied preference order is not valid.
+                  value:
+                    code: FORMAT_PREFERENCE_ORDER
+                    message: The provided preference order is invalid
+                RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED:
+                  description: |
+                    An empty or non-matching body was submitted.
+                  value:
+                    code: RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED
+                    message: An empty or non-matching body was submitted
+                RULE_MISSING_PREFERENCE_ORDER:
+                  description: |
+                    Preference order is required when both previousYearGeneralIncome and currentYearGeneralIncome are submitted.
+                  value:
+                    code: RULE_MISSING_PREFERENCE_ORDER
+                    message: Preference order is required when both previousYearGeneralIncome and currentYearGeneralIncome are submitted
+                RULE_PREFERENCE_ORDER_NOT_ALLOWED:
+                  description: |
+                    Preference order must not be provided unless both previousYearGeneralIncome and currentYearGeneralIncome are submitted.
+                  value:
+                    code: RULE_PREFERENCE_ORDER_NOT_ALLOWED
+                    message: Preference order must not be provided unless both previousYearGeneralIncome and currentYearGeneralIncome are submitted
+                RULE_CARRY_FORWARD_AND_TERMINAL_LOSS_NOT_ALLOWED:
+                  description: |
+                    Carry forward loss claims cannot be submitted with terminal loss claims.
+                  value:
+                    code: RULE_CARRY_FORWARD_AND_TERMINAL_LOSS_NOT_ALLOWED
+                    message: Carry forward loss claims cannot be submitted with terminal loss claims
+                RULE_CARRY_BACK_CLAIM:
+                  description: |
+                    Carry back claim type is not valid for property income sources.
+                  value:
+                    code: RULE_CARRY_BACK_CLAIM
+                    message: Carry back claim type is not valid for property income sources
+                RULE_OUTSIDE_AMENDMENT_WINDOW:
+                  description: |
+                    The request cannot be completed as you are outside the amendment window.
+                  value: &ref_20
+                    code: RULE_OUTSIDE_AMENDMENT_WINDOW
+                    message: You are outside the amendment window
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: |
+                    The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for 
+                    this endpoint version. This error will only be returned in the Sandbox environment.
+                  value: *ref_16
+        '403':
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                URL of the documentation for the API.
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client or agent is not authorised. This is because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value: *ref_17
+        '404':
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                URL of the documentation for the API.
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                MATCHING_RESOURCE_NOT_FOUND:
+                  description: |
+                    The supplied income source could not be found.
+                  value: *ref_18
+    delete:
+      security:
+        - User-Restricted:
+            - write:self-assessment
+      summary: Delete Losses and Claims [test only]
+      description: |
+        This endpoint allows a developer to delete a claim or a brought-forward-loss for a specified individual and business for a given tax year.
+        A National Insurance number, business ID and tax year are required.
+          
+          ### Test data
+          Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+          
+          | Header Value (Gov-Test-Scenario) | Scenario                                                                                        |
+          |----------------------------------|-------------------------------------------------------------------------------------------------|
+          | N/A - DEFAULT                    | Simulates success response.                                                                     |
+          | NOT_FOUND                        | Simulates the scenario where no data is found.                                                  |
+          | OUTSIDE_AMENDMENT_WINDOW         | Simulates the scenario where request cannot be completed as it is outside the amendment window. |
+          | STATEFUL                         | Performs a stateful delete.                                                                     |
+      parameters:
+        - name: nino
+          in: path
+          description: |
+            National Insurance number, in the format `AA999999A`.
+          schema: *ref_6
+          required: true
+        - name: businessId
+          in: path
+          description: |
+            An identifier for the business, unique to the customer.
+          schema: *ref_7
+          required: true
+        - name: taxYear
+          in: path
+          description: |
+            The tax year to which the data applies. The start year and end year must not span two tax years. The minimum tax year is 2026-27. No gaps are allowed, for example, 2026-28 is not valid.
+          schema: *ref_8
+          required: true
+        - name: Accept
+          in: header
+          description: |
+            Specifies the response format and the version of the API to be used.
+          schema: *ref_9
+          required: true
+        - name: Authorization
+          in: header
+          description: |
+            An OAuth 2.0 Bearer Token with the *write:self-assessment* scope.
+          schema: *ref_19
+          required: true
+        - name: Gov-Test-Scenario
+          in: header
+          description: |
+            Only in sandbox environment. See Test Data table for all header values.
+          schema: *ref_10
+          required: false
+      responses:
+        '204':
+          description: Success (No Content)
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                URL of the documentation for the API.
+              schema: *ref_3
+              required: false
+        '400':
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                URL of the documentation for the API.
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value: *ref_11
+                FORMAT_TAX_YEAR:
+                  description: |
+                    The format of the supplied taxYear value is not valid.
+                  value: *ref_13
+                FORMAT_BUSINESS_ID:
+                  description: |
+                    The format of the supplied Business ID field is not valid.
+                  value: *ref_12
+                RULE_TAX_YEAR_RANGE_INVALID:
+                  description: |
+                    Tax year range invalid. A tax year range of one year is required.
+                  value: *ref_15
+                RULE_TAX_YEAR_NOT_SUPPORTED:
+                  description: |
+                    The specified tax year is not supported. The tax year specified is before the minimum tax year value.
+                  value: *ref_14
+                RULE_OUTSIDE_AMENDMENT_WINDOW:
+                  description: |
+                    The request cannot be completed as you are outside the amendment window.
+                  value: *ref_20
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: |
+                    The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for 
+                    this endpoint version. This error will only be returned in the Sandbox environment.
+                  value: *ref_16
+        '403':
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                URL of the documentation for the API.
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client or agent is not authorised. This is because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value: *ref_17
+        '404':
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                URL of the documentation for the API.
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                MATCHING_RESOURCE_NOT_FOUND:
+                  description: |
+                    The supplied income source could not be found.
+                  value: *ref_18
+components:
+  securitySchemes:
+    User-Restricted:
+      type: oauth2
+      description: HMRC supports OAuth 2.0 for authenticating [User-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) API requests
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.service.hmrc.gov.uk/oauth/authorize
+          tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
+          refreshUrl: https://api.service.hmrc.gov.uk/oauth/refresh
+          scopes:
+            write:self-assessment: Grant write access
+            read:self-assessment: Grant read access
