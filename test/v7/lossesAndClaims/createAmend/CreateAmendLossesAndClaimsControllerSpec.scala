@@ -16,15 +16,15 @@
 
 package v7.lossesAndClaims.createAmend
 
+import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
+import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
+import api.models.domain.{BusinessId, TaxYear}
+import api.models.errors.{BusinessIdFormatError, ErrorWrapper, NinoFormatError}
+import api.models.outcomes.ResponseWrapper
 import play.api.Configuration
 import play.api.libs.json.JsValue
 import play.api.mvc.Result
 import play.test.Helpers.PUT
-import shared.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import shared.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
-import shared.models.domain.{BusinessId, TaxYear}
-import shared.models.errors.{BusinessIdFormatError, ErrorWrapper, NinoFormatError}
-import shared.models.outcomes.ResponseWrapper
 import v7.lossesAndClaims.createAmend.fixtures.CreateAmendLossesAndClaimsFixtures.{requestBodyJson, requestBodyModel}
 import v7.lossesAndClaims.createAmend.request.*
 
@@ -112,11 +112,11 @@ class CreateAmendLossesAndClaimsControllerSpec
         )
       )
 
-    MockedSharedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
+    MockedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
       "supporting-agents-access-control.enabled" -> true
     )
 
-    MockedSharedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns true
+    MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns true
 
   }
 

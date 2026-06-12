@@ -16,14 +16,14 @@
 
 package v6.bfLosses.delete.def1
 
+import api.controllers.validators.Validator
+import api.controllers.validators.resolvers.{ResolveNino, ResolveTaxYearMinMax}
+import api.models.domain.TaxYear
+import api.models.errors.{MtdError, RuleTaxYearForVersionNotSupportedError, RuleTaxYearNotSupportedError}
 import cats.data.Validated
 import cats.implicits.catsSyntaxTuple3Semigroupal
-import shared.controllers.validators.Validator
-import shared.controllers.validators.resolvers.{ResolveNino, ResolveTaxYearMinMax}
-import shared.models.domain.TaxYear
-import shared.models.errors.{MtdError, RuleTaxYearForVersionNotSupportedError, RuleTaxYearNotSupportedError}
-import v6.bfLosses.common.{maximumTaxYear, minimumTaxYear}
 import v6.bfLosses.common.resolvers.ResolveBFLossId
+import v6.bfLosses.common.{maximumTaxYear, minimumTaxYear}
 import v6.bfLosses.delete.def1.model.request.Def1_DeleteBFLossRequestData
 import v6.bfLosses.delete.model.request.DeleteBFLossRequestData
 

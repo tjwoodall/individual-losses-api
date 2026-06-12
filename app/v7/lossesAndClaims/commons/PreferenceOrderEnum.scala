@@ -16,8 +16,8 @@
 
 package v7.lossesAndClaims.commons
 
+import api.utils.enums.Enums
 import play.api.libs.json.Format
-import shared.utils.enums.Enums
 
 enum PreferenceOrderEnum {
   case `carry-sideways`, `carry-back`

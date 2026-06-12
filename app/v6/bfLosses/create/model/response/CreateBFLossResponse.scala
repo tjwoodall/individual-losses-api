@@ -16,8 +16,8 @@
 
 package v6.bfLosses.create.model.response
 
+import api.utils.JsonWritesUtil
 import play.api.libs.json.*
-import shared.utils.JsonWritesUtil
 import v6.bfLosses.create.def1.model.response.Def1_CreateBFLossResponse
 
 trait CreateBFLossResponse {

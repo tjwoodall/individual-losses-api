@@ -16,8 +16,8 @@
 
 package v6.lossClaims.list.model.response
 
+import api.utils.JsonWritesUtil
 import play.api.libs.json.*
-import shared.utils.JsonWritesUtil
 import v6.lossClaims.list.def1.response.Def1_ListLossClaimsResponse
 
 trait ListLossClaimsResponse

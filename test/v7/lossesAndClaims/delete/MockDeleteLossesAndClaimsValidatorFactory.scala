@@ -16,8 +16,8 @@
 
 package v7.lossesAndClaims.delete
 
+import api.controllers.validators.{MockValidatorFactory, Validator}
 import org.scalamock.handlers.CallHandler
-import shared.controllers.validators.{MockValidatorFactory, Validator}
 import v7.lossesAndClaims.delete.model.request.DeleteLossesAndClaimsRequestData
 
 trait MockDeleteLossesAndClaimsValidatorFactory extends MockValidatorFactory[DeleteLossesAndClaimsRequestData] {

@@ -16,13 +16,13 @@
 
 package v6.bfLosses.create.def1
 
+import api.config.MockAppConfig
+import api.controllers.validators.Validator
+import api.models.domain.{Nino, TaxYear}
+import api.models.errors.*
+import api.utils.UnitSpec
 import common.errors.TypeOfLossFormatError
 import play.api.libs.json.{JsObject, JsValue, Json}
-import shared.config.MockSharedAppConfig
-import shared.controllers.validators.Validator
-import shared.models.domain.{Nino, TaxYear}
-import shared.models.errors.*
-import shared.utils.UnitSpec
 import v6.bfLosses.common.domain.TypeOfLoss
 import v6.bfLosses.create.def1.model.request.{Def1_CreateBFLossRequestBody, Def1_CreateBFLossRequestData}
 import v6.bfLosses.create.model.request.CreateBFLossRequestData
@@ -64,7 +64,7 @@ class Def1_CreateBFLossValidatorSpec extends UnitSpec {
     validLossAmount
   )
 
-  class Test extends MockSharedAppConfig {
+  class Test extends MockAppConfig {
 
     implicit val clock: Clock = Clock.fixed(Instant.parse("2022-07-11T10:00:00.00Z"), ZoneId.of("UTC"))
 

@@ -16,9 +16,9 @@
 
 package v7.lossesAndClaims.retrieve
 
-import shared.connectors.{ConnectorSpec, DownstreamOutcome}
-import shared.models.domain.{BusinessId, Nino, TaxYear}
-import shared.models.outcomes.ResponseWrapper
+import api.connectors.{ConnectorSpec, DownstreamOutcome}
+import api.models.domain.{BusinessId, Nino, TaxYear}
+import api.models.outcomes.ResponseWrapper
 import uk.gov.hmrc.http.StringContextOps
 import v7.lossesAndClaims.retrieve.fixtures.RetrieveLossesAndClaimsFixtures.responseBodyModel
 import v7.lossesAndClaims.retrieve.model.request.RetrieveLossesAndClaimsRequestData
@@ -52,7 +52,7 @@ class RetrieveLossesAndClaimsConnectorSpec extends ConnectorSpec {
 
   private trait Test {
     self: ConnectorTest =>
-    val connector: RetrieveLossesAndClaimsConnector = new RetrieveLossesAndClaimsConnector(http = mockHttpClient, appConfig = mockSharedAppConfig)
+    val connector: RetrieveLossesAndClaimsConnector = new RetrieveLossesAndClaimsConnector(http = mockHttpClient, appConfig = mockAppConfig)
   }
 
 }

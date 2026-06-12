@@ -16,9 +16,9 @@
 
 package v6.lossClaims.create.model.request
 
+import api.config.AppConfig
+import api.utils.JsonWritesUtil
 import play.api.libs.json.*
-import shared.config.SharedAppConfig
-import shared.utils.JsonWritesUtil
 import v6.lossClaims.create.def1.model.request.Def1_CreateLossClaimRequestBody
 
 trait CreateLossClaimRequestBody {
@@ -27,9 +27,8 @@ trait CreateLossClaimRequestBody {
 
 object CreateLossClaimRequestBody extends JsonWritesUtil {
 
-  implicit def writes(implicit appConfig: SharedAppConfig): OWrites[CreateLossClaimRequestBody] = writesFrom {
-    case a: Def1_CreateLossClaimRequestBody =>
-      implicitly[OWrites[Def1_CreateLossClaimRequestBody]].writes(a)
+  implicit def writes(implicit appConfig: AppConfig): OWrites[CreateLossClaimRequestBody] = writesFrom { case a: Def1_CreateLossClaimRequestBody =>
+    implicitly[OWrites[Def1_CreateLossClaimRequestBody]].writes(a)
   }
 
 }

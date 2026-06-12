@@ -16,8 +16,8 @@
 
 package v6.lossClaims.retrieve
 
+import api.schema.DownstreamReadable
 import play.api.libs.json.Reads
-import shared.schema.DownstreamReadable
 import v6.lossClaims.retrieve.def1.model.response.Def1_RetrieveLossClaimResponse
 import v6.lossClaims.retrieve.model.response.RetrieveLossClaimResponse
 

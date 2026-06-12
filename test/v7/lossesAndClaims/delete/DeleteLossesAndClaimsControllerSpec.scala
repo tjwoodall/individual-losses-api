@@ -16,14 +16,14 @@
 
 package v7.lossesAndClaims.delete
 
+import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
+import api.models.audit.*
+import api.models.domain.{BusinessId, TaxYear}
+import api.models.errors.*
+import api.models.outcomes.ResponseWrapper
 import play.api.Configuration
 import play.api.libs.json.JsValue
 import play.api.mvc.Result
-import shared.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import shared.models.audit.*
-import shared.models.domain.{BusinessId, TaxYear}
-import shared.models.errors.*
-import shared.models.outcomes.ResponseWrapper
 import v7.lossesAndClaims.delete.model.request.DeleteLossesAndClaimsRequestData
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -104,11 +104,11 @@ class DeleteLossesAndClaimsControllerSpec
         )
       )
 
-    MockedSharedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
+    MockedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
       "supporting-agents-access-control.enabled" -> true
     )
 
-    MockedSharedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns true
+    MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns true
 
   }
 

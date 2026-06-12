@@ -16,20 +16,20 @@
 
 package v6.bfLosses.delete
 
+import api.config.Deprecation.NotDeprecated
+import api.config.MockAppConfig
+import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
+import api.models.audit.*
+import api.models.domain.TaxYear
+import api.models.errors.*
+import api.models.outcomes.ResponseWrapper
+import api.routing.Version9
+import api.services.MockAuditService
 import cats.implicits.catsSyntaxValidatedId
 import common.errors.RuleDeleteAfterFinalDeclarationError
 import play.api.Configuration
 import play.api.libs.json.JsValue
 import play.api.mvc.Result
-import shared.config.Deprecation.NotDeprecated
-import shared.config.MockSharedAppConfig
-import shared.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import shared.models.audit.*
-import shared.models.domain.TaxYear
-import shared.models.errors.*
-import shared.models.outcomes.ResponseWrapper
-import shared.routing.Version9
-import shared.services.MockAuditService
 import v6.bfLosses.common.domain.LossId
 import v6.bfLosses.delete
 import v6.bfLosses.delete.def1.model.request.Def1_DeleteBFLossRequestData
@@ -40,7 +40,7 @@ import scala.concurrent.Future
 class DeleteBFLossControllerSpec
     extends ControllerBaseSpec
     with ControllerTestRunner
-    with MockSharedAppConfig
+    with MockAppConfig
     with delete.MockDeleteBFLossService
     with delete.MockDeleteBFLossValidatorFactory
     with MockAuditService {
@@ -109,13 +109,13 @@ class DeleteBFLossControllerSpec
         )
       )
 
-    MockedSharedAppConfig.deprecationFor(Version9).returns(NotDeprecated.valid).anyNumberOfTimes()
+    MockedAppConfig.deprecationFor(Version9).returns(NotDeprecated.valid).anyNumberOfTimes()
 
-    MockedSharedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
+    MockedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
       "supporting-agents-access-control.enabled" -> true
     )
 
-    MockedSharedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
+    MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
 
   }
 

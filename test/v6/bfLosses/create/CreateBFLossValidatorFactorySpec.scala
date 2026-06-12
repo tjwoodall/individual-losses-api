@@ -16,9 +16,9 @@
 
 package v6.bfLosses.create
 
+import api.controllers.validators.Validator
+import api.utils.UnitSpec
 import play.api.libs.json.{JsValue, Json}
-import shared.controllers.validators.Validator
-import shared.utils.UnitSpec
 import v6.bfLosses.create.def1.Def1_CreateBFLossValidator
 import v6.bfLosses.create.model.request.CreateBFLossRequestData
 

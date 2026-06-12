@@ -16,8 +16,8 @@
 
 package v6.lossClaims.common.models
 
+import api.utils.enums.Enums
 import play.api.libs.json.Format
-import shared.utils.enums.Enums
 
 enum IncomeSourceType(val toTypeOfLoss: TypeOfLoss) {
   case `01` extends IncomeSourceType(TypeOfLoss.`self-employment`)

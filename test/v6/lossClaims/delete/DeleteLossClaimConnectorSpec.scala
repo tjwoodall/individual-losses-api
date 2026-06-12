@@ -16,9 +16,9 @@
 
 package v6.lossClaims.delete
 
-import shared.connectors.{ConnectorSpec, DownstreamOutcome}
-import shared.models.domain.{Nino, TaxYear}
-import shared.models.outcomes.ResponseWrapper
+import api.connectors.{ConnectorSpec, DownstreamOutcome}
+import api.models.domain.{Nino, TaxYear}
+import api.models.outcomes.ResponseWrapper
 import uk.gov.hmrc.http.StringContextOps
 import v6.lossClaims.common.models.ClaimId
 import v6.lossClaims.delete.def1.model.request.Def1_DeleteLossClaimRequestData
@@ -46,7 +46,7 @@ class DeleteLossClaimConnectorSpec extends ConnectorSpec {
   }
 
   trait Test { self: ConnectorTest =>
-    val connector: DeleteLossClaimConnector = new DeleteLossClaimConnector(http = mockHttpClient, appConfig = mockSharedAppConfig)
+    val connector: DeleteLossClaimConnector = new DeleteLossClaimConnector(http = mockHttpClient, appConfig = mockAppConfig)
 
     val request: Def1_DeleteLossClaimRequestData =
       Def1_DeleteLossClaimRequestData(nino = nino, claimId = claimId, taxYearClaimedFor = taxYearClaimedFor)

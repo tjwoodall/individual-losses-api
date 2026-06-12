@@ -16,9 +16,9 @@
 
 package v6.lossClaims.retrieve
 
-import shared.connectors.{ConnectorSpec, DownstreamOutcome}
-import shared.models.domain.{Nino, Timestamp}
-import shared.models.outcomes.ResponseWrapper
+import api.connectors.{ConnectorSpec, DownstreamOutcome}
+import api.models.domain.{Nino, Timestamp}
+import api.models.outcomes.ResponseWrapper
 import uk.gov.hmrc.http.StringContextOps
 import v6.lossClaims.common.models.{ClaimId, TypeOfClaim, TypeOfLoss}
 import v6.lossClaims.retrieve.def1.model.request.Def1_RetrieveLossClaimRequestData
@@ -64,7 +64,7 @@ class RetrieveLossClaimConnectorSpec extends ConnectorSpec {
   }
 
   trait Test { self: ConnectorTest =>
-    val connector: RetrieveLossClaimConnector = new RetrieveLossClaimConnector(http = mockHttpClient, appConfig = mockSharedAppConfig)
+    val connector: RetrieveLossClaimConnector = new RetrieveLossClaimConnector(http = mockHttpClient, appConfig = mockAppConfig)
   }
 
 }

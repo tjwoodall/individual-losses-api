@@ -16,18 +16,18 @@
 
 package v6.bfLosses.retrieve
 
+import api.config.Deprecation.NotDeprecated
+import api.config.MockAppConfig
+import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
+import api.models.domain.Timestamp
+import api.models.errors.*
+import api.models.outcomes.ResponseWrapper
+import api.routing.Version9
 import cats.implicits.catsSyntaxValidatedId
 import common.errors.LossIdFormatError
 import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.Result
-import shared.config.Deprecation.NotDeprecated
-import shared.config.MockSharedAppConfig
-import shared.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import shared.models.domain.Timestamp
-import shared.models.errors.*
-import shared.models.outcomes.ResponseWrapper
-import shared.routing.Version9
 import v6.bfLosses.common.domain.{LossId, TypeOfLoss}
 import v6.bfLosses.retrieve
 import v6.bfLosses.retrieve.def1.model.request.Def1_RetrieveBFLossRequestData
@@ -39,7 +39,7 @@ import scala.concurrent.Future
 class RetrieveBFLossControllerSpec
     extends ControllerBaseSpec
     with ControllerTestRunner
-    with MockSharedAppConfig
+    with MockAppConfig
     with retrieve.MockRetrieveBFLossValidatorFactory
     with retrieve.MockRetrieveBFLossService {
 
@@ -110,13 +110,13 @@ class RetrieveBFLossControllerSpec
 
     protected def callController(): Future[Result] = controller.retrieve(validNino, lossId)(fakeRequest)
 
-    MockedSharedAppConfig.deprecationFor(Version9).returns(NotDeprecated.valid).anyNumberOfTimes()
+    MockedAppConfig.deprecationFor(Version9).returns(NotDeprecated.valid).anyNumberOfTimes()
 
-    MockedSharedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
+    MockedAppConfig.featureSwitchConfig.anyNumberOfTimes() returns Configuration(
       "supporting-agents-access-control.enabled" -> true
     )
 
-    MockedSharedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
+    MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
   }
 
 }

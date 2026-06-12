@@ -16,11 +16,11 @@
 
 package v6.bfLosses.retrieve
 
+import api.config.AppConfig
+import api.controllers.*
+import api.services.{EnrolmentsAuthService, MtdIdLookupService}
+import api.utils.IdGenerator
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import shared.config.SharedAppConfig
-import shared.controllers.*
-import shared.services.{EnrolmentsAuthService, MtdIdLookupService}
-import shared.utils.IdGenerator
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -31,7 +31,7 @@ class RetrieveBFLossController @Inject() (val authService: EnrolmentsAuthService
                                           service: RetrieveBFLossService,
                                           validatorFactory: RetrieveBFLossValidatorFactory,
                                           cc: ControllerComponents,
-                                          idGenerator: IdGenerator)(implicit ec: ExecutionContext, appConfig: SharedAppConfig)
+                                          idGenerator: IdGenerator)(implicit ec: ExecutionContext, appConfig: AppConfig)
     extends AuthorisedController(cc) {
 
   override val endpointName: String = "retrieve-bf-loss"

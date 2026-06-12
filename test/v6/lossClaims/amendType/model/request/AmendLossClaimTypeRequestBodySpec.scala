@@ -16,15 +16,15 @@
 
 package v6.lossClaims.amendType.model.request
 
+import api.config.MockAppConfig
+import api.utils.UnitSpec
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.{JsValue, Json}
-import shared.config.MockSharedAppConfig
-import shared.utils.UnitSpec
 import v6.lossClaims.amendType.def1.model.request.Def1_AmendLossClaimTypeRequestBody
 import v6.lossClaims.common.models.TypeOfClaim
 import v6.lossClaims.common.models.TypeOfClaim.*
 
-class AmendLossClaimTypeRequestBodySpec extends UnitSpec with MockSharedAppConfig {
+class AmendLossClaimTypeRequestBodySpec extends UnitSpec with MockAppConfig {
 
   def hipDownstreamJson(reliefClaimed: String): JsValue = Json.parse {
     s"""

@@ -16,11 +16,11 @@
 
 package v6.lossClaims.delete
 
+import api.controllers.RequestContext
+import api.models.errors.*
+import api.services.{BaseService, ServiceOutcome}
 import cats.implicits.*
 import common.errors.{ClaimIdFormatError, RuleOutsideAmendmentWindow, TaxYearClaimedForFormatError}
-import shared.controllers.RequestContext
-import shared.models.errors.*
-import shared.services.{BaseService, ServiceOutcome}
 import v6.lossClaims.delete.model.request.DeleteLossClaimRequestData
 
 import javax.inject.Inject

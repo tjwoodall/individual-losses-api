@@ -16,8 +16,8 @@
 
 package v6.bfLosses.retrieve
 
+import api.schema.DownstreamReadable
 import play.api.libs.json.Reads
-import shared.schema.DownstreamReadable
 import v6.bfLosses.retrieve.def1.model.response.Def1_RetrieveBFLossResponse
 import v6.bfLosses.retrieve.model.response.RetrieveBFLossResponse
 

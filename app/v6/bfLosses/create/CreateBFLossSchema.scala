@@ -16,10 +16,10 @@
 
 package v6.bfLosses.create
 
+import api.schema.DownstreamReadable
 import play.api.libs.json.Reads
-import shared.schema.DownstreamReadable
-import v6.bfLosses.create.model.response.CreateBFLossResponse
 import v6.bfLosses.create.def1.model.response.Def1_CreateBFLossResponse
+import v6.bfLosses.create.model.response.CreateBFLossResponse
 
 sealed trait CreateBFLossSchema extends DownstreamReadable[CreateBFLossResponse]
 
