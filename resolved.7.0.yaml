@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: "Individual Losses (MTD) [test only]"
+  title: Individual Losses (MTD)
   description: "The following endpoints are stateful in the Sandbox:\n  * Retrieve\
     \ Losses and Claims    \n  * Create or Amend Losses and Claims\n  * Delete Losses\
     \ and Claims\n\n# Send fraud prevention data\nHMRC monitors transactions to help\
