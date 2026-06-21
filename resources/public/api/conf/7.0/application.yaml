@@ -2,7 +2,7 @@ openapi: "3.0.3"
 
 info:
   version: "7.0"
-  title: "Individual Losses (MTD) [test only]"
+  title: Individual Losses (MTD)
   description: |
     The following endpoints are stateful in the Sandbox:
       * Retrieve Losses and Claims    
