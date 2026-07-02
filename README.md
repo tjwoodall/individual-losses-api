@@ -1,4 +1,4 @@
-individual-losses-api
+Individual Losses API
 ========================
 
 [![Apache-2.0 license](http://img.shields.io/badge/license-Apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
@@ -6,34 +6,27 @@ individual-losses-api
 The Individual Losses API allows a developer to show and provide a taxpayers’ financial data for their Brought Forward
 Losses and Loss Claims.
 
-For Brought Forward Losses, a developer can:
+For Losses and Claims, a developer can:
 
-- provide a list of brought forward losses
-- create a new brought forward loss
-- show a single brought forward loss
-- delete an existing brought forward loss
-- update an existing brought forward loss
-
-For Loss Claims, a developer can:
-
-- provide a list of loss claims
-- create a loss claim against an income source for a specific tax year
-- show the detail of an existing loss claim
-- delete a previously entered loss claim
-- update a previously entered loss claim
+- create or amend a claim or brought-forward-loss for a given tax year
+- show the detail of existing claims or brought-forward-losses for a specific tax year
+- delete previously entered claims or brought-forward-losses
 
 ## Requirements
 
-- Scala 3.x.x
-- Java 11
-- sbt 1.9.x
+- Scala 3.5.x
+- Java 21
+- sbt 1.10.x
 - [Service Manager V2](https://github.com/hmrc/sm2)
 
 ## Development Setup
 
 Run the microservice from the console using: `sbt run` (starts on port 9779 by default)
 
-Start the service manager profile: `sm2 --start MTDFB_LOSSES`
+Start the service manager profile: 
+```bash
+sm2 --start MTDFB_LOSSES
+```
 
 ## Run Tests
 
@@ -41,17 +34,25 @@ Run unit tests: `sbt test`
 
 Run integration tests: `sbt it/test`
 
-## To view the OAS
+## View OpenAPI Specification (OAS) documentation
 
-To view documentation locally, ensure the Individual Losses API is running, and run api-documentation-frontend:
+To view the OpenAPI documentation locally, ensure the API is running.
 
+Start the `api-documentation-frontend` and `api-definition` services using the Service Manager profile:
+
+```bash
+sm2 -start DEVHUB_PREVIEW_OPENAPI
 ```
-./run_local_with_dependencies.sh
+
+Then navigate to the preview page:
+
+```text
+http://localhost:9680/api-documentation/docs/openapi/preview
 ```
 
-Then go to http://localhost:9680/api-documentation/docs/openapi/preview and use the appropriate port and version:
+Enter the specification URL using the appropriate port and API version:
 
-```
+```text
 http://localhost:9779/api/conf/7.0/application.yaml
 ```
 
