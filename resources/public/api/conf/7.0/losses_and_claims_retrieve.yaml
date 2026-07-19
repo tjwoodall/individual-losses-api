@@ -43,11 +43,9 @@ responses:
           $ref: './schemas/lossesAndClaims/retrieve/response.json'
         examples:
           Losses and Claims:
-            value:
-              $ref: './examples/lossesAndClaims/retrieve/retrieve_losses_and_claims.json'
+            externalValue: './examples/lossesAndClaims/retrieve/retrieve_losses_and_claims.json'
           Terminal Loss Claim:
-            value:
-              $ref: './examples/lossesAndClaims/retrieve/retrieve_terminal_loss_claim.json'
+            externalValue: './examples/lossesAndClaims/retrieve/retrieve_terminal_loss_claim.json'
 
   "400":
     description: Bad request
