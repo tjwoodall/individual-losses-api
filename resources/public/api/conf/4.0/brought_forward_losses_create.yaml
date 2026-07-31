@@ -35,16 +35,13 @@ post:
         examples:
           example-1:
             description: Self-Employment Request
-            value:
-              $ref: './examples/broughtForwardLosses/createBFLoss/create_request_self_employment.json'
+            externalValue: './examples/broughtForwardLosses/createBFLoss/create_request_self_employment.json'
           example-2:
             description: UK Property Request
-            value:
-              $ref: './examples/broughtForwardLosses/createBFLoss/create_request_uk_property_fhl.json'
+            externalValue: './examples/broughtForwardLosses/createBFLoss/create_request_uk_property_fhl.json'
           example-3:
             description: Foreign Property Request
-            value:
-              $ref: './examples/broughtForwardLosses/createBFLoss/create_request_foreign_property.json'
+            externalValue: './examples/broughtForwardLosses/createBFLoss/create_request_foreign_property.json'
 
   responses:
     "201":
@@ -59,8 +56,7 @@ post:
           examples:
             example-1:
               description: Example Response
-              value:
-                $ref: './examples/broughtForwardLosses/createBFLoss/create_response.json'
+              externalValue: './examples/broughtForwardLosses/createBFLoss/create_response.json'
 
 
     "400":

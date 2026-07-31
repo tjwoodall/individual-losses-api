@@ -37,8 +37,7 @@ requestBody:
       examples:
         example-1:
           description: Given any tax year
-          value:
-            $ref: './examples/lossClaims/amendLossClaimsOrder/def1/request.json'
+          externalValue: './examples/lossClaims/amendLossClaimsOrder/def1/request.json'
 
 responses:
   "200":
