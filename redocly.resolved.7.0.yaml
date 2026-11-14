@@ -170,21 +170,21 @@ paths:
                         properties:
                           previousYearGeneralIncome:
                             type: number
-                            description: The amount of the current tax year's trading losses to carry back under Section 64 to be off set against general income of the previous year(s). The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                            description: The amount of the current tax year's trading losses to carry back to be off set against general income of the previous year(s). The value must be between 0 and 99999999999.99 up to 2 decimal places.
                             example: 5000.99
                             multipleOf: 0.01
                             minimum: 0
                             maximum: 99999999999.99
                           earlyYearLosses:
                             type: number
-                            description: The amount of the current tax year's trading losses to carry back under Section 72 to be set off against general income of the previous year(s). The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                            description: The amount of the current tax year's trading losses to carry back and be set off against general income of the previous year(s). The value must be between 0 and 99999999999.99 up to 2 decimal places.
                             example: 5000.99
                             multipleOf: 0.01
                             minimum: 0
                             maximum: 99999999999.99
                           terminalLosses:
                             type: number
-                            description: The amount of the current tax year's trading losses to be carry back under Section 89 and applied against profits of the three previous years, starting with the latest year first. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                            description: The amount of the current tax year's trading losses to be carry back and applied against profits of the three previous years, starting with the latest year first. The value must be between 0 and 99999999999.99 up to 2 decimal places.
                             example: 5000.99
                             multipleOf: 0.01
                             minimum: 0
@@ -195,7 +195,7 @@ paths:
                         properties:
                           currentYearGeneralIncome:
                             type: number
-                            description: The amount of the current tax year's trading losses to be off set general income of the current tax year under Section 64. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                            description: The amount of the current tax year's trading losses to be off set general income of the current tax year. The value must be between 0 and 99999999999.99 up to 2 decimal places.
                             example: 5000.99
                             multipleOf: 0.01
                             minimum: 0
@@ -210,7 +210,7 @@ paths:
                               - carry-sideways
                               - carry-back
                             description: |-
-                              Specifies the preference order when the current tax year's trading losses have been claimed under Section 64 to set against general income of a previous year and set against general income of the current tax year.
+                              Specifies the preference order when the current tax year's trading losses have been claimed to set against general income of a previous year and set against general income of the current tax year.
 
                               Limited to the following possible values:
                               * carry-sideways 
@@ -221,14 +221,14 @@ paths:
                         properties:
                           currentYearLosses:
                             type: number
-                            description: The amount of trading losses in the current tax year carried forward to offset future profits of the same trade under Section 83. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                            description: The amount of trading losses in the current tax year carried forward to offset future profits of the same trade. The value must be between 0 and 99999999999.99 up to 2 decimal places.
                             example: 5000.99
                             multipleOf: 0.01
                             minimum: 0
                             maximum: 99999999999.99
                           previousYearsLosses:
                             type: number
-                            description: The amount of trading losses from previous years carried forward to offset future profits of the same trade under Section 83. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                            description: The amount of trading losses from previous years carried forward to offset future profits of the same trade. The value must be between 0 and 99999999999.99 up to 2 decimal places.
                             example: 5000.99
                             multipleOf: 0.01
                             minimum: 0
@@ -529,21 +529,21 @@ paths:
                       properties:
                         previousYearGeneralIncome:
                           type: number
-                          description: The amount of the current tax year's trading losses to carry back under Section 64 to be off set against general income of the previous year(s). The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          description: The amount of the current tax year's trading losses to carry back to be off set against general income of the previous year(s). The value must be between 0 and 99999999999.99 up to 2 decimal places.
                           example: 5000.99
                           multipleOf: 0.01
                           minimum: 0
                           maximum: 99999999999.99
                         earlyYearLosses:
                           type: number
-                          description: The amount of the current tax year's trading losses to carry back under Section 72 to be set off against general income of the previous year(s). The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          description: The amount of the current tax year's trading losses to carry back and be set off against general income of the previous year(s). The value must be between 0 and 99999999999.99 up to 2 decimal places.
                           example: 5000.99
                           multipleOf: 0.01
                           minimum: 0
                           maximum: 99999999999.99
                         terminalLosses:
                           type: number
-                          description: The amount of the current tax year's trading losses to be carry back under Section 89 and applied against profits of the three previous years, starting with the latest year first. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          description: The amount of the current tax year's trading losses to be carry back and applied against profits of the three previous years, starting with the latest year first. The value must be between 0 and 99999999999.99 up to 2 decimal places.
                           example: 5000.99
                           multipleOf: 0.01
                           minimum: 0
@@ -554,7 +554,7 @@ paths:
                       properties:
                         currentYearGeneralIncome:
                           type: number
-                          description: The amount of the current tax year's trading losses to be off set general income of the current tax year under Section 64. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          description: The amount of the current tax year's trading losses to be off set general income of the current tax year. The value must be between 0 and 99999999999.99 up to 2 decimal places.
                           example: 5000.99
                           multipleOf: 0.01
                           minimum: 0
@@ -569,7 +569,7 @@ paths:
                             - carry-sideways
                             - carry-back
                           description: |-
-                            Specifies the preference order when the current tax year's trading losses have been claimed under Section 64 to set against general income of a previous year and set against general income of the current tax year.
+                            Specifies the preference order when the current tax year's trading losses have been claimed to set against general income of a previous year and set against general income of the current tax year.
 
                             Limited to the following possible values:
                             * carry-sideways 
@@ -580,14 +580,14 @@ paths:
                       properties:
                         currentYearLosses:
                           type: number
-                          description: The amount of trading losses in the current tax year carried forward to offset future profits of the same trade under Section 83. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          description: The amount of trading losses in the current tax year carried forward to offset future profits of the same trade. The value must be between 0 and 99999999999.99 up to 2 decimal places.
                           example: 5000.99
                           multipleOf: 0.01
                           minimum: 0
                           maximum: 99999999999.99
                         previousYearsLosses:
                           type: number
-                          description: The amount of trading losses from previous years carried forward to offset future profits of the same trade under Section 83. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          description: The amount of trading losses from previous years carried forward to offset future profits of the same trade. The value must be between 0 and 99999999999.99 up to 2 decimal places.
                           example: 5000.99
                           multipleOf: 0.01
                           minimum: 0
